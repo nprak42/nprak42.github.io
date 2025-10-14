@@ -347,7 +347,7 @@
             .stat-number {
                 font-size: 2.5rem;
             }
-            
+
             .social-links a {
                 pointer-events: auto;
                 cursor: pointer;
@@ -489,7 +489,7 @@
 
     <script>
         // Add smooth hover effect for bento items
-        document.querySelectorAll('.bento-item').forEach(item => {
+        document.querySelectorAll('.bento-item:not(.contact-box)').forEach(item => {
             item.addEventListener('mouseenter', function() {
                 this.style.zIndex = '10';
             });
