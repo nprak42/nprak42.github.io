@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Niranjan Prakash Portfolio</title>
+    <title>Niranjan Prakash</title>
     <style>
         * {
             margin: 0;
@@ -11,497 +11,874 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --teal: #5eadbd;
+            --teal-light: #e6f7f9;
+            --gray: #6b6b6b;
+            --gray-light: #a3a3a3;
+            --gray-lighter: #e5e5e5;
+            --text: #2a2a2a;
+            --bg: #ffffff;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            color: #1a1a1a;
-            padding: 40px 20px;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding-top: 70px;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        header {
-            margin-bottom: 60px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            font-weight: 800;
-        }
-
-        header p {
-            font-size: 1.3rem;
-            color: #666;
-        }
-
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .bento-item {
-            border-radius: 24px;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            min-height: 200px;
-        }
-
-        .bento-item::before {
-            content: '';
-            position: absolute;
+        /* Navigation */
+        nav {
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-            opacity: 0;
-            transition: opacity 0.3s;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-lighter);
+            z-index: 1000;
         }
 
-        .bento-item:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
         }
 
-        .bento-item:hover::before {
-            opacity: 1;
+        nav .logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
         }
 
-        /* Grid Sizes */
-        .span-2 { grid-column: span 2; }
-        .span-3 { grid-column: span 3; }
-        .span-4 { grid-column: span 4; }
-        .span-6 { grid-column: span 6; }
-        
-        .row-2 { grid-row: span 2; }
-        .row-3 { grid-row: span 3; }
-
-        /* Hero Box */
-        .hero-box {
-            background: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
-            color: white;
+        nav .nav-links {
+            display: flex;
+            gap: 35px;
+            list-style: none;
         }
 
-        .hero-box h2 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            font-weight: 800;
-            line-height: 1.1;
+        nav .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
         }
 
-        .hero-box p {
-            font-size: 1.2rem;
-            opacity: 0.95;
+        nav .nav-links a:hover {
+            color: var(--teal);
         }
 
-        /* About Box */
-        .about-box {
-            background: #2d3748;
-            color: white;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 40px;
         }
 
-        .about-box h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .about-box p {
-            font-size: 1rem;
-            line-height: 1.7;
-            opacity: 0.9;
-        }
-
-        /* Stats Boxes */
-        .stat-box {
-            text-align: center;
+        /* Hero */
+        section#hero {
+            min-height: 85vh;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(94, 173, 189, 0.08) 0%, rgba(94, 173, 189, 0.03) 100%);
+            padding: 100px 0;
+        }
+
+        #hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        #hero .tagline {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--gray);
+        }
+
+        #hero .intro {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--gray);
+            max-width: 650px;
+        }
+
+        /* Section Spacing */
+        section {
+            padding: 80px 0;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 50px;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        /* About */
+        .about-layout {
+            display: flex;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .about-image-container {
+            flex-shrink: 0;
+        }
+
+        .about-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid var(--gray-lighter);
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+
+        .about-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Photo Grid */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .photo-placeholder {
+            aspect-ratio: 4/3;
+            background: var(--teal-light);
+            border: 1px solid var(--gray-lighter);
+            border-radius: 6px;
+            display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .stat-box.teal { background: #5eead4; color: #0f766e; }
-        .stat-box.green { background: #6bcf7f; color: #065f46; }
-        .stat-box.cyan { background: #67e8f9; color: #0e7490; }
-        .stat-box.emerald { background: #34d399; color: #065f46; }
-
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 1.1rem;
-            font-weight: 600;
-            opacity: 0.9;
-        }
-
-        /* Skills Box */
-        .skills-box {
-            background: linear-gradient(135deg, #14b8a6 0%, #059669 100%);
-            color: white;
-        }
-
-        .skills-box h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-        }
-
-        .skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .skill-tag {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 10px 18px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        /* Project Boxes */
-        .project-box {
-            background: white;
-            border: 2px solid #e2e8f0;
-        }
-
-        .project-box h3 {
-            font-size: 1.6rem;
-            margin-bottom: 12px;
-            color: #0f766e;
-        }
-
-        .project-box p {
-            color: #666;
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-
-        .project-tech {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .tech-badge {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* Contact Box */
-        .contact-box {
-            background: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
-            color: white;
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-style: italic;
+            padding: 20px;
             text-align: center;
-            z-index: 100 !important;
-            position: relative;
         }
 
-        .contact-box h3 {
-            font-size: 2rem;
-            margin-bottom: 20px;
+        /* Currently Section */
+        .currently-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
         }
 
-        .social-links {
+        .currently-item h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-light);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .currently-item p {
+            font-size: 1.15rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* Cards (Projects & Work Experience) */
+        .card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            border: 1px solid var(--gray-lighter);
+            background: var(--bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--teal);
+            box-shadow: 0 4px 12px rgba(94, 173, 189, 0.1);
+        }
+
+        .card-header {
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 20px;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+            gap: 15px;
+        }
+
+        .card-info h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text);
+        }
+
+        .card-date {
+            font-size: 0.9rem;
+            color: var(--gray-light);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .card-org {
+            font-size: 0.95rem;
+            color: var(--teal);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .tech-stack {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tech-tag {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border: 1px solid var(--gray-lighter);
+            background: var(--bg);
+            color: var(--gray);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .expand-icon {
+            font-size: 1.3rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+            color: var(--teal);
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .card.expanded .expand-icon {
+            transform: rotate(45deg);
+        }
+
+        .card-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            border-top: 1px solid var(--gray-lighter);
+        }
+
+        .card.expanded .card-details {
+            max-height: 3000px;
+        }
+
+        .card-details-content {
+            padding: 30px;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-section h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .detail-section p,
+        .detail-section ul {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--gray);
+        }
+
+        .detail-section ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .detail-section li {
+            margin-bottom: 8px;
+        }
+
+        .detail-section li:last-child {
+            margin-bottom: 0;
+        }
+
+        .placeholder {
+            padding: 20px;
+            background: var(--teal-light);
+            border: 1px dashed var(--gray-lighter);
+            border-radius: 6px;
+            font-style: italic;
+            color: var(--gray-light);
+            font-size: 0.95rem;
+        }
+
+        /* Skills */
+        .skills-text {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: var(--gray);
+        }
+
+        /* Contact */
+        #contact {
+            background: linear-gradient(135deg, rgba(94, 173, 189, 0.12) 0%, rgba(94, 173, 189, 0.06) 100%);
+            text-align: center;
+        }
+
+        #contact h2 {
+            margin-bottom: 40px;
+        }
+
+        .contact-links {
             display: flex;
             gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
-            z-index: 100 !important;
-            position: relative;
         }
 
-        .social-btn {
-            background: rgba(255, 255, 255, 0.2);
+        .contact-btn {
+            padding: 14px 28px;
+            background: var(--teal);
             color: white;
             text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 30px;
             font-weight: 600;
-            transition: all 0.3s;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 100 !important;
-            position: relative;
-            pointer-events: auto !important;
+            font-size: 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: inline-block;
         }
 
-        .social-btn:hover {
-            background: white;
-            color: #667eea;
-            transform: scale(1.05);
-        }
-
-        /* Image Box */
-        .image-box {
-            background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            position: relative;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        /* Quote Box */
-        .quote-box {
-            background: #134e4a;
-            color: white;
-        }
-
-        .quote-box blockquote {
-            font-size: 1.3rem;
-            font-style: italic;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .quote-box cite {
-            font-size: 0.95rem;
-            opacity: 0.7;
-            font-style: normal;
-        }
-
-        /* Location Box */
-        .location-box {
-            background: linear-gradient(135deg, #ccfbf1 25%, #d1fae5 100%);
-            color: #0f766e; 
-        }
-
-        .location-box h3 {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-        }
-
-        .location-box p {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .contact-btn:hover {
+            background: #4a9aa9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(94, 173, 189, 0.3);
         }
 
         /* Responsive */
-        @media (max-width: 1200px) {
-            .bento-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            .span-6 { grid-column: span 4; }
-        }
-
         @media (max-width: 768px) {
             body {
-                padding: 20px 15px;
+                padding-top: 60px;
             }
 
-            header h1 {
+            nav .container {
+                padding: 15px 25px;
+            }
+
+            nav .nav-links {
+                gap: 20px;
+            }
+
+            nav .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding: 0 25px;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            section h2 {
+                font-size: 2rem;
+                margin-bottom: 35px;
+            }
+
+            #hero h1 {
                 font-size: 2.5rem;
             }
 
-            .bento-grid {
+            #hero .tagline {
+                font-size: 1.2rem;
+            }
+
+            #hero .intro {
+                font-size: 1.05rem;
+            }
+
+            .about-layout {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .about-image {
+                width: 140px;
+                height: 140px;
+            }
+
+            .photo-grid {
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
 
-            .span-2, .span-3, .span-4, .span-6 {
-                grid-column: span 1;
+            .currently-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
             }
 
-            .row-2, .row-3 {
-                grid-row: span 1;
+            .card-header {
+                padding: 25px;
             }
 
-            .bento-item {
-                padding: 30px;
-                min-height: 150px;
+            .card-title-row {
+                flex-direction: column;
+                gap: 5px;
+                align-items: start;
             }
 
-            .hero-box h2 {
-                font-size: 2rem;
+            .card-info h3 {
+                font-size: 1.2rem;
             }
 
-            .stat-number {
-                font-size: 2.5rem;
+            .card-details-content {
+                padding: 25px;
             }
 
-            .social-links a {
-                pointer-events: auto;
-                cursor: pointer;
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .contact-btn {
+                width: 100%;
+                max-width: 300px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Hi, I'm Niranjan Prakash</h1>
-            <p>Building things to help change the world or something</p>
-        </header>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="#hero" class="logo">Niranjan Prakash</a>
+            <ul class="nav-links">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
 
-        <div class="bento-grid">
-            <!-- Hero Box -->
-            <div class="bento-item hero-box span-3 row-2">
-                <div>
-                    <h2>Driven for Equity | Transforming Data into Insights</h2>
-                    <p>I specialize in building automated data pipelines and machine learning solutions that solve real-world problems. From reducing manual work by 60% to processing thousands of log files daily, I create systems that make a difference. </p>
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <h1>Niranjan Prakash</h1>
+            <p class="tagline">Building ML systems for education and impact</p>
+            <p class="intro">I specialize in building automated data pipelines and machine learning solutions that solve real-world problems. From reducing manual work by 60% to processing thousands of log files daily, I create systems that make a difference.</p>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2>About</h2>
+            <div class="about-layout">
+                <div class="about-image-container">
+                    <img src="profile.jpeg" alt="Niranjan Prakash" class="about-image">
+                </div>
+                <div class="about-text">
+                    <p>Master's student in Data Analytics and Computational Social Science at UMass Amherst, graduating May 2026. Over three years with Teach For India in both classroom and strategic roles, I've designed predictive ML models for applicant screening and built data systems that drive decision-making at scale.</p>
+                    <p>Previously taught Math and Science to 200 students, achieving a 20% increase in student mastery through data-driven personalized tracking systems. Now focused on MLOps and educational technology, building production ML pipelines that ship and scale.</p>
                 </div>
             </div>
 
-            <!-- Profile Image -->
-            <div class="bento-item image-box span-2 row-2">
-                <img src="profile.jpeg" alt="Niranjan Prakash" style="width: 100%; height: 100%; object-fit: cover; border-radius: 800px;">
+            <div class="photo-grid">
+                <div class="photo-placeholder">[Photo: Classroom teaching]</div>
+                <div class="photo-placeholder">[Photo: Team collaboration]</div>
+                <div class="photo-placeholder">[Photo: Student interaction]</div>
             </div>
+        </div>
+    </section>
 
-            <!-- Location -->
-            <div class="bento-item location-box">
-                <h3>Based in</h3>
-                <p>📍 Amherst, MA</p>
-            </div>
-
-            <!-- Photos? -->
-            <div class="bento-item stat-box yellow">
-                <div class="stat-number">10+</div>
-                <div class="stat-label">Projects</div>
-            </div>
-
-            <div class="bento-item stat-box green">
-                <div class="stat-number">3</div>
-                <div class="stat-label">Years Exp</div>
-            </div>
-
-            <div class="bento-item stat-box pink">
-                <div class="stat-number">60%</div>
-                <div class="stat-label">Time Saved</div>
-            </div>
-
-            <!-- Skills -->
-            <div class="bento-item skills-box span-3">
-                <h3>Skills & Tools</h3>
-                <div class="skill-tags">
-                    <span class="skill-tag">Python</span>
-                    <span class="skill-tag">Docker</span>
-                    <span class="skill-tag">CSS</span>
-                    <span class="skill-tag">Machine Learning</span>
-                    <span class="skill-tag">CSS</span>
-                    <span class="skill-tag">R</span>
+    <!-- Currently Section -->
+    <section id="currently">
+        <div class="container">
+            <h2>Currently</h2>
+            <div class="currently-grid">
+                <div class="currently-item">
+                    <h3>Reading</h3>
+                    <p>Pact and Pattern Trilogy</p>
                 </div>
-            </div>
-
-            <!-- Projects -->
-            <div class="bento-item project-box span-2">
-                <div>
-                    <h3>Twitch Social Network Analysis</h3>
-                    <p>Scraped data from Twitch and conducted social network analysis to identify sponsorship patterns among high tier and mid tier streamers.</p>
+                <div class="currently-item">
+                    <h3>Learning</h3>
+                    <p>NLP and deploying ML models on HF Spaces</p>
                 </div>
-                <div class="project-tech">
-                    <span class="tech-badge">React</span>
-                    <span class="tech-badge">Node.js</span>
-                    <span class="tech-badge">MongoDB</span>
+                <div class="currently-item">
+                    <h3>Watching</h3>
+                    <p>The Mighty Nein</p>
                 </div>
-            </div>
-
-            <div class="bento-item project-box span-2">
-                <div>
-                    <h3>Library Logfile Dataset</h3>
-                    <p>Automated daily log file processing system using Docker and EZPaarse, delivering COUNTER-Lite analytics to help library administration make data-driven decisions through an interactive Libinsight dashboard.</p>
-                </div>
-                <div class="project-tech">
-                    <span class="tech-badge">React</span>
-                    <span class="tech-badge">Storybook</span>
-                    <span class="tech-badge">Figma</span>
-                </div>
-            </div>
-
-            <div class="bento-item project-box span-2">
-                <div>
-                    <h3>RoBERTa Essay classification</h3>
-                    <p>Real-time messaging app with AI-powered features</p>
-                </div>
-                <div class="project-tech">
-                    <span class="tech-badge">Next.js</span>
-                    <span class="tech-badge">OpenAI</span>
-                    <span class="tech-badge">WebSockets</span>
-                </div>
-            </div>
-
-            <div class="bento-item project-box span-2">
-                <div>
-                    <h3>PPO PokeRL</h3>
-                    <p>Built a custom battle engine for PPO to beat Brock in record times. </p>
-                </div>
-                <div class="project-tech">
-                    <span class="tech-badge">Next.js</span>
-                    <span class="tech-badge">OpenAI</span>
-                    <span class="tech-badge">WebSockets</span>
-                </div>
-            </div>
-
-            <!-- About -->
-            <div class="bento-item about-box span-3">
-                <h3>About Me</h3>
-                <p>Passionate about driving educational equity, I have dedicated over three years to Teach For India, working in both classroom and strategic roles. As an Associate on the Selection Team, I designed and implemented predictive models using machine learning techniques like Logistic Regression and XGBoost to forecast applicant success, ensuring a more effective selection process. I also streamlined Monitoring and Evaluation processes, creating long-term templates that enhanced data tracking accuracy and consistency. My ability to generate insightful reports on fellow performance helped senior leadership make informed decisions.
-
-                    Previously, as a Fellow, I taught Math and Science to 200 students in a low-income private school, achieving a 20% increase in student mastery. My innovative approach led to the development of a personalized data tracking system that significantly improved the school's passing rate by 25%. I also designed a Mental Health Awareness curriculum, impacting over 150 adolescents, and spearheaded initiatives like community visits that boosted student attendance to 90% within a month. My efforts extended beyond the classroom as I mentored students in national competitions, organized science fairs, and facilitated workshops for my peers.
-                    
-                    Driven by a commitment to educational innovation and community engagement, I’m eager to continue making a meaningful impact in the education sector through Data.</p>
-            </div>
-
-            <!-- Quote -->
-            <div class="bento-item quote-box span-3">
-                <blockquote>"All models are wrong but some are useful"</blockquote>
-                <cite>— George E.P. Box</cite>
-            </div>
-
-            <!-- Contact -->
-            <div class="bento-item contact-box span-6">
-                <h3>Let's Work Together</h3>
-                <div class="social-links">
-                    <a href="mailto:niranjanprak@umass.edu" class="social-btn"> Email</a>
-                    <a href="https://www.linkedin.com/in/niranjanprakash" class="social-btn" target="_blank"> LinkedIn</a>
-                    <a href="https://github.com/nprak42" class="social-btn" target="_blank">GitHub</a>
-                    <a href="https://drive.google.com/file/d/1K2l6duvaaLwkcCQYsxBP_oNTCCo0Pvsc/view?usp=sharing" class="social-btn" target="_blank">📱 Resume</a>
+                <div class="currently-item">
+                    <h3>Playing</h3>
+                    <p>Hollow Knight Silksong</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Work Experience Section -->
+    <section id="experience">
+        <div class="container">
+            <h2>Work Experience</h2>
+            <div class="card-grid">
+                
+                <!-- Research Assistant -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-title-row">
+                                <h3>Research Assistant</h3>
+                                <span class="card-date">Fall 2024 - Present</span>
+                            </div>
+                            <p class="card-org">University of Massachusetts Amherst</p>
+                            <p class="card-description">Analyzing UN Human Rights Council data to map civil society participation patterns across nations</p>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-details-content">
+                            <div class="detail-section">
+                                <ul>
+                                    <li>Scraped data from UNHRC to create comprehensive lists of Civil Society participation for each nation</li>
+                                    <li>Built network graphs of joint and individual submissions for each nation to identify collaboration patterns</li>
+                                    <li>Developed data collection and analysis pipelines for large-scale document processing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teaching Assistant -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-title-row">
+                                <h3>Teaching Assistant - Social Network Analysis</h3>
+                                <span class="card-date">Fall 2024</span>
+                            </div>
+                            <p class="card-org">University of Massachusetts Amherst</p>
+                            <p class="card-description">Supporting students in mastering network analysis concepts and computational methods</p>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-details-content">
+                            <div class="detail-section">
+                                <ul>
+                                    <li>Helped students with different aspects of network analysis from network construction to data collection to network measures</li>
+                                    <li>Provided guidance on computational tools and methodologies for analyzing complex networks</li>
+                                    <li>Facilitated understanding of theoretical concepts through practical applications</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Analyst Internship -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-title-row">
+                                <h3>Data Analyst Intern</h3>
+                                <span class="card-date">Summer 2024</span>
+                            </div>
+                            <p class="card-org">Lamar Soutter Library, UMass Chan Medical School</p>
+                            <p class="card-description">Built automated log file processing system delivering daily analytics to library administration</p>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-details-content">
+                            <div class="detail-section">
+                                <ul>
+                                    <li>Automated daily log file processing system using Docker and EZPaarse to process thousands of library access records</li>
+                                    <li>Delivered COUNTER-Lite analytics through interactive LibInsight dashboard, enabling data-driven decision-making</li>
+                                    <li>Reduced manual processing time by implementing containerized workflows for consistent, repeatable analysis</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TFI Data Associate -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-title-row">
+                                <h3>Data Associate, Selection Team</h3>
+                                <span class="card-date">May 2023 - April 2024</span>
+                            </div>
+                            <p class="card-org">Teach For India</p>
+                            <p class="card-description">Built ML models for applicant screening, achieving 80% matriculation rate across 60+ interviews</p>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-details-content">
+                            <div class="detail-section">
+                                <ul>
+                                    <li>Utilized Python to build multiple ML models (Logistic Regression, XGBoost, Cross-validation) to create an Acceptance Probability score for applicants based on application parameters</li>
+                                    <li>Addressed data imbalance issues within sample by applying oversampling techniques</li>
+                                    <li>Systemized the Monitoring and Evaluation of processes by creating long-term templates for future reports</li>
+                                    <li>Interviewed over 60 applicants for the Fellowship, with a matriculation rate of 80%</li>
+                                    <li>Collaborated with Training and Impact team along with different City teams to refine Selection criteria based on data insights</li>
+                                    <li>Created reports on Fellow performance at strategic intervals and conveyed findings to Senior Leadership</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TFI Teaching Fellow -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-title-row">
+                                <h3>Teaching Fellow</h3>
+                                <span class="card-date">June 2021 - May 2023</span>
+                            </div>
+                            <p class="card-org">Teach For India</p>
+                            <p class="card-description">Taught 200 students, achieving 20% increase in mastery and 25% rise in school passing rate</p>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-details-content">
+                            <div class="detail-section">
+                                <ul>
+                                    <li>Taught Math and Science to 200 students in a low-income private school, leading to a 20% increase in student mastery</li>
+                                    <li>Developed a personalized data tracking system for 10th graders, enabling individualized study plans that contributed to a 25% rise in the school's passing rate</li>
+                                    <li>Designed and implemented a curriculum on Mental Health Awareness, reaching over 150 adolescents and equipping them with skills to identify and regulate their emotions</li>
+                                    <li>Engaged over 70 parents through community visits, successfully boosting student attendance to 90% within one month</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <div class="container">
+            <h2>Projects</h2>
+            <div class="card-grid">
+                
+                <!-- RoBERTa Project -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-info">
+                            <h3>RoBERTa Essay Classification Pipeline</h3>
+                            <p class="card-description">Enables accurate and confident filtering of low potential candidates at scale, enabling org growth and focus on right fit candidates</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">PyTorch</span>
+                                <span class="tech-tag">Transformers</span>
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">scikit-learn</span>
+                            </div>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-details-content">
+                            <div class="detail-section">
+                                <h4>Problem</h4>
+                                <p>Manual evaluation at scale is a tedious problem with a lot of scope for automation. [Add your details here about the specific challenges TFI faced with essay screening, volume of applications, time constraints, consistency issues]</p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Solution</h4>
+                                <div class="placeholder">
+                                    [Add technical approach: fine-tuning details, dataset size, model architecture choices, training process, how you handled class imbalance, validation strategy]
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Impact</h4>
+                                <div class="placeholder">
+                                    [Add metrics: accuracy improvements, precision/recall, time saved per application, number of essays processed, 5 months in production, screening efficiency gains]
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Technical Details</h4>
+                                <div class="placeholder">
+                                    [Add implementation specifics: deployment strategy, challenges faced with production ML, key decisions made, lessons learned, ongoing monitoring/maintenance]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logfile Analysis -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-info">
+                            <h3>Library Logfile Analytics Pipeline</h3>
+                            <p class="card-description">Automated daily log file processing system using Docker and EZPaarse, delivering COUNTER-Lite analytics through an interactive LibInsight dashboard</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Docker</span>
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">EZPaarse</span>
+                                <span class="tech-tag">LibInsight</span>
+                            </div>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-details-content">
+                            <div class="detail-section placeholder">
+                                Content coming soon - will include dashboard screenshots, Docker architecture diagram, specific decisions enabled by the analytics, and processing volume/efficiency metrics
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UNHRC Research -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-info">
+                            <h3>Civil Society Network Analysis</h3>
+                            <p class="card-description">Data scraping from UN Human Rights Council documents to create network visualizations exploring civil society engagement and participation patterns</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">NetworkX</span>
+                                <span class="tech-tag">Web Scraping</span>
+                                <span class="tech-tag">R/igraph</span>
+                            </div>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-details-content">
+                            <div class="detail-section placeholder">
+                                Content coming soon - will include research question, scraping methodology, network construction approach, visualization examples, and key findings about collaboration patterns
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <div class="container">
+            <h2>Skills</h2>
+            <p class="skills-text">I build machine learning pipelines using Python, PyTorch, and scikit-learn, deploy them with Docker and cloud platforms, and communicate insights through interactive dashboards. Comfortable with R for statistical analysis and network modeling, SQL for data management, and wrangling messy data at scale.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <h2>Let's Connect</h2>
+            <div class="contact-links">
+                <a href="mailto:niranjanprak@umass.edu" class="contact-btn">Email</a>
+                <a href="#" class="contact-btn" target="_blank">LinkedIn</a>
+                <a href="#" class="contact-btn" target="_blank">GitHub</a>
+                <a href="#" class="contact-btn" target="_blank">Resume</a>
+            </div>
+        </div>
+    </section>
 
     <script>
-        // Add smooth hover effect for bento items
-        document.querySelectorAll('.bento-item:not(.contact-box)').forEach(item => {
-            item.addEventListener('mouseenter', function() {
-                this.style.zIndex = '10';
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Card accordion (only one open at a time within each section)
+        function toggleCard(card) {
+            const wasExpanded = card.classList.contains('expanded');
+            const section = card.closest('section');
+            
+            // Close all cards in this section
+            section.querySelectorAll('.card').forEach(c => {
+                c.classList.remove('expanded');
             });
             
-            item.addEventListener('mouseleave', function() {
-                this.style.zIndex = '1';
-            });
+            // If this card wasn't expanded, expand it
+            if (!wasExpanded) {
+                card.classList.add('expanded');
+                
+                // Smooth scroll to bring expanded card into view
+                setTimeout(() => {
+                    card.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
+                }, 100);
+            }
+        }
+
+        // Close expanded card when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.card')) {
+                document.querySelectorAll('.card').forEach(c => {
+                    c.classList.remove('expanded');
+                });
+            }
         });
     </script>
 </body>
