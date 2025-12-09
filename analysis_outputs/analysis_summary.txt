@@ -1,0 +1,33 @@
+ESSAY CLASSIFICATION ANALYSIS SUMMARY
+======================================================================
+
+Dataset: roberta_predictions.csv
+Total Predictions: 4746
+Overall Accuracy: 44.82%
+
+Confidence Statistics:
+  - Mean confidence (correct): 0.554
+  - Mean confidence (incorrect): 0.541
+  - Low confidence predictions (<0.5): 1835 (38.7%)
+
+Error Analysis:
+  - Exact matches: 2127 (44.8%)
+  - Off by 1 class: 2112 (44.5%)
+  - Off by 2+ classes: 507 (10.7%)
+
+All outputs saved to: analysis_outputs/
+
+======================================================================
+
+CLASSIFICATION REPORT:
+              precision    recall  f1-score   support
+
+     Score 1       0.30      0.54      0.39       391
+     Score 2       0.68      0.47      0.56      2293
+     Score 3       0.47      0.31      0.37      1632
+     Score 4       0.24      0.86      0.38       397
+     Score 5       0.00      0.00      0.00        33
+
+    accuracy                           0.45      4746
+   macro avg       0.34      0.44      0.34      4746
+weighted avg       0.54      0.45      0.46      4746

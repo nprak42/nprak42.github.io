@@ -8,15 +8,7 @@ plt.style.use('seaborn-v0_8-darkgrid')
 sns.set_palette("husl")
 
 # Load your CSV
-df = pd.read_csv('deberta_predictions.csv')
-
-# Clean up the data - remove 'tensor(' and ')' from essay_id if present
-if df['essay_id'].dtype == 'object':
-    df['essay_id'] = df['essay_id'].str.replace('tensor(', '').str.replace(')', '')
-
-print(f"Loaded {len(df)} predictions")
-print(f"Accuracy: {df['is_correct'].mean():.2%}")
-print(f"Within 1 score: {df['within_1'].mean():.2%}")
+df = pd.read_csv('predictions_roberta.csv')
 
 # ============================================
 # 1. CONFUSION MATRIX
@@ -24,7 +16,7 @@ print(f"Within 1 score: {df['within_1'].mean():.2%}")
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
-cm = confusion_matrix(df['true_score'], df['predicted_score'])
+cm = confusion_matrix(df['true_label'], df['predicted_label'])
 
 fig, ax = plt.subplots(figsize=(10, 8))
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
@@ -32,7 +24,7 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
             cbar_kws={'label': 'Count'})
 ax.set_xlabel('Predicted Score', fontsize=12, fontweight='bold')
 ax.set_ylabel('True Score', fontsize=12, fontweight='bold')
-ax.set_title('DeBERTa Confusion Matrix', fontsize=14, fontweight='bold')
+ax.set_title('RoBERTa Confusion Matrix', fontsize=14, fontweight='bold')
 plt.tight_layout()
 plt.savefig('deberta_confusion_matrix.png', dpi=300, bbox_inches='tight')
 print("✓ Saved: deberta_confusion_matrix.png")
