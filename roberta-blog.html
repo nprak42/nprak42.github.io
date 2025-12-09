@@ -300,10 +300,9 @@
     <!-- Post Header -->
     <header class="post-header">
         <div class="container">
-            <h1>Building a Production ML Pipeline for Essay Classification</h1>
+            <h1>Building a Production ML Pipeline for Essay Classification: Optimizing for the Right Task</h1>
             <div class="post-meta">
                 <span>December 2024</span>
-                <span class="post-status">Draft in Progress</span>
             </div>
         </div>
     </header>
@@ -312,35 +311,240 @@
     <article class="post-content">
         <div class="container">
             
-            <div class="placeholder-content">
-                <p>Content coming soon...</p>
-                <p style="margin-top: 15px; font-size: 0.95rem;">This post will cover the technical details of fine-tuning RoBERTa for essay classification, handling severe class imbalance, deploying to production, and lessons learned from 5 months in production.</p>
-            </div>
-
-            <!-- 
-            STRUCTURE FOR WHEN YOU WRITE THE POST:
+            <h2>The Problem: Scaling Human Judgment at 20,000+ Applications</h2>
             
-            <h2>The Problem</h2>
-            <p>Your content here about manual essay screening challenges...</p>
+            <p>Teach For India has grown dramatically since its founding in 2010. Starting with just 2 cities, the organization now operates in 9 cities across India, recruiting teachers to work in under-resourced schools. This growth is incredible for impact, but it creates a significant operational challenge: how do you evaluate over 20,000 fellowship applications each year?</p>
 
-            <h2>The Solution</h2>
-            <p>Your content about the technical approach...</p>
+            <p>Each application includes essays where candidates write about their experiences, motivations, and responses to challenges. These essays are critical for assessing whether someone has the traits needed to succeed as a Teaching Fellow. Manual evaluation works at small scale, but at 20,000+ applications, it becomes a bottleneck. The selection team needed a way to automate initial screening while maintaining quality and ensuring the right people make it into classrooms that need them most.</p>
 
-            <h3>Model Selection</h3>
-            <p>Why RoBERTa...</p>
+            <h2>Why Transformers Instead of ChatGPT?</h2>
 
-            <h3>Handling Class Imbalance</h3>
-            <p>Details about oversampling, loss functions, etc...</p>
+            <p>The obvious question: why not just use ChatGPT or another large language model?</p>
 
-            <h2>Results</h2>
-            <p>Metrics, impact, time savings...</p>
+            <p>Three reasons:</p>
 
-            <h2>Production Deployment</h2>
-            <p>How you deployed it, monitoring, maintenance...</p>
+            <ul>
+                <li><strong>Cost at scale:</strong> Processing 20,000 essays through API calls adds up quickly. Even at a few cents per essay, you're looking at thousands of dollars per application cycle.</li>
+                <li><strong>Inference speed:</strong> We needed batch processing capabilities. Sending essays one-by-one to an API creates latency issues, especially during deadline weeks when hundreds of essays arrive daily.</li>
+                <li><strong>Fine-tuning control:</strong> TFI has specific organizational criteria for what "Courage" looks like in an essay. Fine-tuning a smaller transformer model gives us precise control over predictions aligned with these criteria.</li>
+            </ul>
 
-            <h2>Lessons Learned</h2>
-            <p>What went well, what didn't, what you'd do differently...</p>
-            -->
+            <p>The solution: fine-tune RoBERTa-base on labeled essay data.</p>
+
+            <h2>The Technical Approach</h2>
+
+            <h3>What is "Courage"?</h3>
+
+            <p>Before diving into the model, it's important to understand what we're predicting. "Courage" measures how applicants describe ambitious commitments they've made and their responses to challenges within those commitments. It's scored on a 1-5 scale, where higher scores indicate stronger evidence of taking on difficult challenges and persevering through obstacles.</p>
+
+            <h3>Dataset and Class Imbalance</h3>
+
+            <p>I had access to 14,000 labeled essays from previous application cycles, split 80/20 into training and test sets. The class distribution was severely imbalanced:</p>
+
+            <ul>
+                <li>Score 1: 3,006 essays (21%)</li>
+                <li>Score 2: 6,000 essays (42%)</li>
+                <li>Score 3: 4,422 essays (31%)</li>
+                <li>Score 4: 806 essays (6%)</li>
+                <li>Score 5: 70 essays (0.5%)</li>
+            </ul>
+
+            <p>Traditional machine learning wisdom says to balance your classes through oversampling, undersampling, or synthetic data generation. I made a deliberate choice not to do this for the RoBERTa model. Here's why: the task wasn't "predict all scores accurately." The task was "confidently identify low-potential applicants so the selection team can focus their time on borderline cases."</p>
+
+            <p>Having more examples of low-scoring essays meant the model had more signal to learn what "low Courage" looks like. The class imbalance wasn't a bug—it was encoding task-relevant information.</p>
+
+            <h3>Model Architecture: RoBERTa-Base</h3>
+
+            <p>I fine-tuned RoBERTa-base (a 125M parameter transformer model) on the Courage trait. The key architectural choice was the output layer: instead of outputting a single class prediction, the model outputs a probability distribution across all five scores.</p>
+
+            <p>This means for any given essay, I get:</p>
+            
+            <pre><code>P(score=1) = 0.12
+P(score=2) = 0.68
+P(score=3) = 0.18
+P(score=4) = 0.02
+P(score=5) = 0.00</code></pre>
+
+            <p>Rather than just "this essay is a 2," I get "the model is 68% confident this is a 2, but there's an 18% chance it could be a 3." This uncertainty quantification becomes crucial in production.</p>
+
+            <h3>Training</h3>
+
+            <p>The model was trained for 4 epochs using standard cross-entropy loss. The loss curves show healthy convergence:</p>
+
+            <img src="loss_curve_courage.png" alt="Training and validation loss curves for Courage model" style="width: 100%; max-width: 600px; margin: 30px auto; display: block; border: 1px solid var(--gray-lighter); border-radius: 8px;">
+
+            <p>Training loss decreases steadily from 1.42 to 1.06, showing the model is learning effectively. Validation loss plateaus around 1.37-1.45 after epoch 2, indicating some overfitting but acceptable generalization. The gap between training and validation loss is reasonable for this task, and early stopping at epoch 3-4 prevents further overfitting.</p>
+
+            <h2>Results: Optimizing for the Right Metric</h2>
+
+            <h3>RoBERTa Performance</h3>
+
+            <p>The final RoBERTa model achieved:</p>
+
+            <ul>
+                <li><strong>Overall accuracy: 49%</strong> (5-class problem)</li>
+                <li><strong>Weighted F1: 0.50</strong></li>
+                <li><strong>Class 1 recall: 63%</strong> (critical for low-score detection)</li>
+                <li><strong>Class 2 recall: 44%</strong></li>
+            </ul>
+
+            <p>49% accuracy sounds mediocre. In a typical machine learning project, you'd go back and try to improve this. But here's where task definition matters more than raw metrics.</p>
+
+            <h3>The DeBERTa Experiment</h3>
+
+            <p>To validate my approach, I tried an alternative: DeBERTa with balanced sampling. I reduced the dataset to 10,000 essays and rebalanced the class distribution:</p>
+
+            <ul>
+                <li>Score 1: 982 (9.8%)</li>
+                <li>Score 2: 2,861 (28.5%)</li>
+                <li>Score 3: 4,137 (41.3%)</li>
+                <li>Score 4: 1,902 (19.0%)</li>
+                <li>Score 5: 141 (1.4%)</li>
+            </ul>
+
+            <p>DeBERTa performed better by traditional metrics:</p>
+
+            <ul>
+                <li><strong>Overall accuracy: 52%</strong></li>
+                <li><strong>Macro F1: 0.46</strong></li>
+                <li><strong>QWK (Quadratic Weighted Kappa): 0.60</strong></li>
+                <li>Much better recall on high scores (Class 4: 67%, Class 5: 29%)</li>
+            </ul>
+
+            <p>But here's the key difference:</p>
+
+            <table style="border-collapse: collapse; margin: 20px 0;">
+                <tr style="border-bottom: 2px solid #e5e5e5;">
+                    <th style="padding: 10px; text-align: left;">Model</th>
+                    <th style="padding: 10px; text-align: left;">Class 1 Recall</th>
+                    <th style="padding: 10px; text-align: left;">Class 2 Recall</th>
+                    <th style="padding: 10px; text-align: left;">Overall Accuracy</th>
+                </tr>
+                <tr style="border-bottom: 1px solid #e5e5e5;">
+                    <td style="padding: 10px;"><strong>RoBERTa</strong></td>
+                    <td style="padding: 10px; color: #10b981; font-weight: 700;">63%</td>
+                    <td style="padding: 10px; color: #10b981; font-weight: 700;">44%</td>
+                    <td style="padding: 10px;">49%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px;"><strong>DeBERTa</strong></td>
+                    <td style="padding: 10px;">43%</td>
+                    <td style="padding: 10px;">41%</td>
+                    <td style="padding: 10px; color: #10b981; font-weight: 700;">52%</td>
+                </tr>
+            </table>
+
+            <p><strong>RoBERTa is 20 percentage points better at detecting the lowest-scoring essays.</strong> DeBERTa is better overall and much better at predicting high scores, but that's not the task. High-scoring essays will pass through the filter regardless—we need to catch the low-scoring ones.</p>
+
+            <p>This is why I deployed RoBERTa to production despite its "worse" accuracy. It's optimized for the actual business problem.</p>
+
+            <h2>Production Deployment and Impact</h2>
+
+            <h3>The Human-in-the-Loop System</h3>
+
+            <p>The model doesn't make final decisions. Instead, it feeds into a rule-based filtering system that combines Courage predictions with other application data (test scores, grades, work experience, word count) to flag essays for manual review.</p>
+
+            <p>For example, essays might be flagged if:</p>
+            <ul>
+                <li>Courage score ≥ 3 AND strong academics BUT model confidence < 70%</li>
+                <li>Low Courage score but exceptional other traits</li>
+                <li>Contradictory signals across different parts of the application</li>
+            </ul>
+
+            <p>The probability distributions are critical here. Look at these examples from production:</p>
+
+            <p><strong>High confidence rejection:</strong></p>
+            <pre><code>P(1)=88%, P(2)=9%, P(3)=2%, P(4)=0%, P(5)=0%
+→ Clear low score, 97% confidence in rejection range
+→ No manual review needed</code></pre>
+
+            <p><strong>Uncertain case:</strong></p>
+            <pre><code>P(1)=11%, P(2)=46%, P(3)=33%, P(4)=10%, P(5)=0%
+→ Most likely a 2, but 33% chance it's a 3
+→ Flag for human review</code></pre>
+
+            <p>This uncertainty quantification enables the selection team to focus their time where it matters: borderline cases where the model isn't confident.</p>
+
+            <h3>Deployment Architecture</h3>
+
+            <p>The model is deployed on HuggingFace Spaces using a simple Flask backend. It's free tier hosting, which works for our use case:</p>
+
+            <ul>
+                <li>Weekly batch processing of ~300 essays</li>
+                <li>Twice weekly during deadline periods (600 essays/week)</li>
+                <li>Cold starts aren't an issue since we're not doing real-time inference</li>
+            </ul>
+
+            <p>Over 5 months in production, the system has processed an estimated 10,000-15,000 essays.</p>
+
+            <h3>Impact on the Selection Team</h3>
+
+            <p>Before automation:</p>
+            <ul>
+                <li>3 team members manually scoring essays</li>
+                <li>2 hours per week during regular periods</li>
+                <li>10 hours per week during deadline periods</li>
+                <li>Total: 6-30 person-hours per week on initial screening</li>
+            </ul>
+
+            <p>After automation:</p>
+            <ul>
+                <li>Model processes 300 essays in ~5 minutes</li>
+                <li>Team focuses only on flagged cases (typically 20-30% of essays)</li>
+                <li>Estimated time savings: 60% reduction in manual screening work</li>
+            </ul>
+
+            <p>The selection team can now invest their expertise in nuanced evaluations rather than mechanical scoring.</p>
+
+            <h2>Challenges and Lessons Learned</h2>
+
+            <h3>1. Task Definition Matters More Than Accuracy</h3>
+
+            <p>The biggest lesson: <strong>optimize for the business problem, not the ML metric.</strong> A model with 49% accuracy beat a model with 52% accuracy because it was better at the actual task (identifying low scores). If I'd optimized for overall accuracy, I would've deployed the wrong model.</p>
+
+            <h3>2. Class Imbalance as Signal</h3>
+
+            <p>Conventional ML wisdom says to balance your classes. But imbalance can encode valuable information. Having 42% of essays scored as 2 meant the model saw tons of examples of "mediocre Courage," which made it better at confidently identifying and rejecting these essays.</p>
+
+            <p>The key is understanding what your model needs to learn. For filtering tasks, you want strong signal on the classes you're filtering for.</p>
+
+            <h3>3. Probability Distributions > Hard Classifications</h3>
+
+            <p>Outputting probability distributions instead of hard classifications was crucial. It enabled:</p>
+            <ul>
+                <li>Confidence-based filtering rules</li>
+                <li>Natural integration with human review workflows</li>
+                <li>Transparency about model uncertainty</li>
+            </ul>
+
+            <p>This approach mimics how human evaluators think: "I'm pretty sure this is a 2, but it could be a 3."</p>
+
+            <h3>4. Free Hosting for Production ML</h3>
+
+            <p>HuggingFace Spaces free tier has limitations (cold starts, potential downtime), but it's viable for organizations without ML infrastructure budgets. The key is designing your system to tolerate these constraints. Batch processing weekly instead of real-time inference makes this work.</p>
+
+            <h3>5. Multiclass with Fuzzy Boundaries</h3>
+
+            <p>Even trained human evaluators disagree on whether an essay is a 2 or a 3. The boundaries are subjective. A model that outputs probability distributions captures this inherent ambiguity better than one that forces a single prediction.</p>
+
+            <h2>What's Next</h2>
+
+            <p>The model has been running successfully for 5 months, but there's always room for improvement:</p>
+
+            <ul>
+                <li><strong>Monitoring production performance:</strong> Collecting feedback from evaluators on flagged cases to measure real-world accuracy</li>
+                <li><strong>Iterating on filtering rules:</strong> Adjusting thresholds based on team workflows</li>
+                <li><strong>Exploring ensemble approaches:</strong> Combining multiple models to improve confidence calibration</li>
+                <li><strong>Expanding to other traits:</strong> Applying similar approaches to other essay evaluation dimensions</li>
+            </ul>
+
+            <h2>Conclusion</h2>
+
+            <p>Building production ML systems isn't just about maximizing accuracy on a test set. It's about deeply understanding the business problem, choosing the right metrics to optimize, and designing systems that integrate naturally with human workflows.</p>
+
+            <p>The Courage essay classification model shows that a "worse" model by traditional metrics can be better for the actual task. By preserving class imbalance, outputting probability distributions, and optimizing for low-score detection, we built a system that's been processing thousands of essays in production for months—and saving the selection team hundreds of hours in the process.</p>
+
+            <p>Sometimes the best ML model isn't the one with the highest accuracy. It's the one that solves the right problem.</p>
 
         </div>
     </article>
