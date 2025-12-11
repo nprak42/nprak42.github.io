@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building a Production ML Pipeline for Essay Classification - Niranjan Prakash</title>
+    <title>Building ML for Teacher Selection: When Getting It Wrong Means Leaving Kids Behind</title>
     <style>
+        :root {
+            --teal: #5eadbd;
+            --teal-light: #e8f4f6;
+            --gray: #555;
+            --gray-light: #777;
+            --gray-lighter: #e0e0e0;
+            --black: #2c2c2c;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --teal: #5eadbd;
-            --teal-light: #e6f7f9;
-            --gray: #6b6b6b;
-            --gray-light: #a3a3a3;
-            --gray-lighter: #e5e5e5;
-            --text: #2a2a2a;
-            --bg: #ffffff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             line-height: 1.7;
+            color: var(--black);
+            background: #ffffff;
             padding-top: 70px;
         }
 
-        /* Navigation */
         nav {
             position: fixed;
             top: 0;
@@ -42,31 +40,31 @@
         }
 
         nav .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
         }
 
         nav .logo {
             font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text);
+            font-weight: 600;
+            color: var(--black);
             text-decoration: none;
         }
 
         nav .nav-links {
             display: flex;
-            gap: 35px;
-            list-style: none;
+            gap: 30px;
         }
 
         nav .nav-links a {
             color: var(--gray);
             text-decoration: none;
-            font-weight: 500;
             font-size: 0.95rem;
-            transition: color 0.2s;
+            transition: color 0.3s;
         }
 
         nav .nav-links a:hover {
@@ -74,149 +72,167 @@
         }
 
         .container {
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 0 40px;
         }
 
-        /* Back Link */
         .back-link {
-            padding: 80px 0 20px;
+            padding: 80px 0 30px;
         }
 
         .back-link a {
-            color: var(--gray);
+            color: var(--teal);
             text-decoration: none;
             font-size: 0.95rem;
-            font-weight: 500;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: color 0.2s;
         }
 
         .back-link a:hover {
-            color: var(--teal);
+            text-decoration: underline;
         }
 
-        .back-link a::before {
-            content: '←';
-        }
-
-        /* Post Header */
         .post-header {
-            padding: 40px 0 60px;
+            padding: 20px 0 50px;
+            border-bottom: 1px solid var(--gray-lighter);
         }
 
         .post-header h1 {
-            font-size: 3rem;
-            font-weight: 800;
+            font-size: 2.5rem;
             line-height: 1.2;
-            letter-spacing: -0.03em;
             margin-bottom: 20px;
+            color: var(--black);
         }
 
         .post-meta {
-            display: flex;
-            gap: 15px;
-            align-items: center;
             color: var(--gray-light);
             font-size: 0.95rem;
         }
 
-        .post-status {
-            color: var(--teal);
-            font-weight: 600;
-            padding: 4px 10px;
-            background: var(--teal-light);
-            border-radius: 4px;
-            font-size: 0.85rem;
-        }
-
-        /* Post Content */
         .post-content {
-            padding-bottom: 100px;
+            padding: 60px 0;
         }
 
         .post-content h2 {
             font-size: 1.8rem;
-            font-weight: 700;
-            margin: 50px 0 20px;
-            letter-spacing: -0.01em;
+            margin: 50px 0 25px;
+            color: var(--black);
         }
 
         .post-content h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin: 40px 0 15px;
-            letter-spacing: -0.01em;
+            font-size: 1.3rem;
+            margin: 40px 0 20px;
+            color: var(--black);
         }
 
         .post-content p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--gray);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
         }
 
-        .post-content ul,
-        .post-content ol {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--gray);
-            margin-bottom: 25px;
-            padding-left: 30px;
+        .post-content ul, .post-content ol {
+            margin: 20px 0 20px 25px;
         }
 
         .post-content li {
             margin-bottom: 10px;
+            font-size: 1.05rem;
         }
 
-        .post-content code {
-            font-family: 'Monaco', 'Courier New', monospace;
-            background: var(--teal-light);
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.95em;
-            color: var(--text);
+        .post-content strong {
+            color: var(--black);
+            font-weight: 600;
         }
 
         .post-content pre {
             background: #f5f5f5;
-            border: 1px solid var(--gray-lighter);
-            border-radius: 6px;
             padding: 20px;
+            border-radius: 6px;
             overflow-x: auto;
-            margin-bottom: 25px;
+            margin: 25px 0;
+            font-size: 0.9rem;
+            border: 1px solid var(--gray-lighter);
         }
 
-        .post-content pre code {
-            background: none;
-            padding: 0;
-            font-size: 0.9rem;
+        .post-content code {
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .post-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+
+        .post-content table th,
+        .post-content table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-lighter);
+        }
+
+        .post-content table th {
+            background: var(--teal-light);
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        .callout-box {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: 3px solid #e74c3c;
+            border-radius: 12px;
+            padding: 30px 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .callout-box h3 {
+            color: #c0392b;
+            font-size: 1.5rem;
+            margin: 0 0 20px 0;
+            letter-spacing: 1px;
+        }
+
+        .callout-box p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+
+        .callout-box p:last-child {
+            margin-bottom: 0;
+            font-style: italic;
+            font-size: 1.05rem;
+        }
+
+        .callout-box .emphasis {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .kicker {
+            background: var(--teal-light);
+            border-left: 4px solid var(--teal);
+            padding: 25px 30px;
+            margin: 50px 0 30px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            font-style: italic;
+            color: var(--black);
             line-height: 1.6;
         }
 
-        .post-content blockquote {
-            border-left: 4px solid var(--teal);
-            padding-left: 20px;
-            margin: 30px 0;
-            font-style: italic;
-            color: var(--gray);
-        }
-
-        .placeholder-content {
-            padding: 60px 40px;
-            background: var(--teal-light);
-            border: 2px dashed var(--gray-lighter);
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 30px auto;
             border-radius: 8px;
-            text-align: center;
-            color: var(--gray-light);
-            font-size: 1.1rem;
-            font-style: italic;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             body {
                 padding-top: 60px;
@@ -226,53 +242,24 @@
                 padding: 15px 25px;
             }
 
-            nav .nav-links {
-                gap: 20px;
-            }
-
-            nav .nav-links a {
-                font-size: 0.9rem;
-            }
-
             .container {
                 padding: 0 25px;
-            }
-
-            .back-link {
-                padding: 60px 0 20px;
-            }
-
-            .post-header {
-                padding: 30px 0 40px;
             }
 
             .post-header h1 {
                 font-size: 2rem;
             }
 
-            .post-content {
-                padding-bottom: 60px;
-            }
-
             .post-content h2 {
                 font-size: 1.5rem;
-                margin: 40px 0 15px;
             }
 
             .post-content h3 {
-                font-size: 1.25rem;
-                margin: 30px 0 12px;
+                font-size: 1.2rem;
             }
 
-            .post-content p,
-            .post-content ul,
-            .post-content ol {
-                font-size: 1.05rem;
-            }
-
-            .placeholder-content {
-                padding: 40px 25px;
-                font-size: 1rem;
+            .callout-box {
+                padding: 25px 20px;
             }
         }
     </style>
@@ -281,38 +268,38 @@
     <!-- Navigation -->
     <nav>
         <div class="container">
-            <a href="portfolio-v2.html" class="logo">Niranjan Prakash</a>
-            <ul class="nav-links">
-                <li><a href="portfolio-v2.html">Home</a></li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="portfolio-v2.html#contact">Contact</a></li>
-            </ul>
+            <a href="index.html" class="logo">Niranjan Prakash</a>
+            <div class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html#experience">Experience</a>
+                <a href="index.html#projects">Projects</a>
+                <a href="blog.html">Blog</a>
+            </div>
         </div>
     </nav>
 
     <!-- Back Link -->
-    <div class="back-link">
-        <div class="container">
-            <a href="blog.html">Back to Blog</a>
+    <div class="container">
+        <div class="back-link">
+            <a href="blog.html">← Back to Blog</a>
         </div>
     </div>
 
     <!-- Post Header -->
-    <header class="post-header">
-        <div class="container">
-            <h1>Building a Production ML Pipeline for Teacher Selection: When Getting It Wrong Means Leaving Kids Behind</h1>
+    <div class="container">
+        <div class="post-header">
+            <h1>Building ML for Teacher Selection: When Getting It Wrong Means Leaving Kids Behind</h1>
             <div class="post-meta">
-                <span>December 2025</span>
+                <span>December 2024</span>
             </div>
         </div>
-    </header>
+    </div>
 
     <!-- Post Content -->
     <article class="post-content">
         <div class="container">
             
-            <h2>The Problem: When Getting It Wrong Means Leaving Kids Behind</h2>
-            
+            <!-- A. OPENING STORY -->
             <p>I spent two years as a Teach For India Fellow in Ahmedabad, teaching Math and Science to 200 students in a low-income private school. It was the hardest thing I've ever done. I was managing limited resources, navigating relationships with parents and school administration, dealing with the beautiful chaos of adolescents being adolescents, and carrying the weight of knowing these kids deserved better than what the education system had given them.</p>
 
             <p>Some days, I genuinely questioned whether I could keep going. But I did. Because leaving mid-year would have meant those 200 students losing yet another teacher, falling further behind, and learning—again—that adults don't keep their commitments.</p>
@@ -321,300 +308,184 @@
 
             <p>The data backs this up: <strong>Fellows who score low on a key resilience trait are nearly twice as likely to leave before completing their commitment</strong> compared to those who meet the bar. Attrition isn't just a retention problem—it's an equity problem.</p>
 
-            <h3>Scaling Selection at 20,000+ Applications</h3>
-
-            <p>Teach For India has grown from 2 cities in 2010 to 9 cities by 2020. This growth is incredible for impact, but it creates a challenge: how do you evaluate over 20,000 fellowship applications each year?</p>
-
-            <p>Each application includes essays where candidates write about their experiences, their motivations, and how they've responded to challenges. These essays are meant to assess something difficult to quantify: Will this person stick it out when things get hard?</p>
+            <!-- B. WHAT WE'RE REALLY PREDICTING -->
+            <h2>What We're Really Predicting</h2>
 
             <p>The selection team calls it "grit," but what does that even mean? How do you measure someone's determination from a 500-word essay? How do you identify who has the resilience to show up every day for two years, even when it feels impossible?</p>
 
-            <p>These are genuinely hard questions. And at 20,000+ applications, manual evaluation becomes a bottleneck. The selection team needed a way to automate initial screening while maintaining quality.</p>
+            <p>Teach For India scaled from 2 cities in 2010 to 9 cities by 2020, receiving over 20,000 fellowship applications annually. Each application includes essays describing ambitious commitments and responses to challenges. At this scale, manual evaluation becomes impossible.</p>
 
-            <p>That's why, when I joined TFI's Selection Team, I wanted to ensure we were choosing the right teachers for our students. When someone leaves mid-year, the only people negatively impacted are their students. The question became: <strong>How can we gauge the resilience or grit of an applicant at scale?</strong></p>
-
-            <p>And critically: <strong>I optimized the model to identify candidates who won't make it, not to predict who will excel.</strong> Because when someone leaves, they don't just quit a job—they break a promise to kids who've already been let down too many times. I'd rather flag a borderline applicant for human review than let someone through who'll walk away when it gets hard.</p>
-
-            <h2>Why Transformers Instead of ChatGPT?</h2>
-
-            <p>The obvious question: why not just use ChatGPT or another large language model?</p>
-
-            <p>Three reasons:</p>
-
+            <p><strong>Why not use ChatGPT?</strong> Three reasons:</p>
             <ul>
-                <li><strong>Cost at scale:</strong> Processing 20,000 essays through API calls adds up quickly. Even at a few cents per essay, you're looking at thousands of dollars per application cycle.</li>
-                <li><strong>Inference speed:</strong> We needed batch processing capabilities. Sending essays one-by-one to an API creates latency issues, especially during deadline weeks when hundreds of essays arrive daily.</li>
-                <li><strong>Fine-tuning control:</strong> TFI has specific organizational criteria for what resilience looks like in an essay. Fine-tuning a smaller transformer model gives us precise control over predictions aligned with these criteria—and years of labeled data from past selection cycles.</li>
+                <li><strong>Cost:</strong> Processing 20,000 essays through API calls adds up quickly—thousands of dollars per cycle</li>
+                <li><strong>Speed:</strong> API latency creates bottlenecks during deadline weeks when hundreds of essays arrive daily</li>
+                <li><strong>Control:</strong> TFI has 14,000 labeled essays from past cohorts—fine-tuning gives precise control over predictions</li>
             </ul>
 
-            <p>The solution: fine-tune RoBERTa-base on 14,000 labeled essays from previous cohorts.</p>
+            <!-- C. MODEL GOAL CALLOUT -->
+            <div class="callout-box">
+                <h3>THE MODEL'S JOB</h3>
+                <p class="emphasis">We do NOT predict who will excel.</p>
+                <p class="emphasis">We flag who will quit.</p>
+                <p>Because the cost of missing that signal is measured in disrupted classrooms.</p>
+            </div>
 
-            <h2>The Technical Approach</h2>
+            <!-- D. TECHNICAL APPROACH -->
+            <h2>Technical Approach</h2>
 
-            <h3>What Are We Actually Measuring?</h3>
-
-            <p>Before diving into the model, it's important to acknowledge the ambiguity here. We're trying to predict a nebulous human quality—grit, resilience, persistence—from text. The essays ask applicants to describe ambitious commitments they've made and how they've responded when those commitments got difficult.</p>
-
-            <p>Human evaluators score these essays on a 1-5 scale. But even trained evaluators disagree on whether an essay demonstrates a "2" or a "3" level of grit. The boundaries are fuzzy. This isn't like classifying spam emails—it's trying to quantify something deeply subjective.</p>
-
-            <p>This uncertainty shaped every technical decision I made.</p>
-
-            <h3>Dataset and Class Imbalance</h3>
-
-            <p>I had access to 14,000 labeled essays from previous application cycles, split 80/20 into training and test sets. The class distribution was severely imbalanced:</p>
-
+            <h3>The Data</h3>
+            <p>14,000 labeled essays from previous cohorts, split 80/20 into training and test sets. The class distribution was severely imbalanced:</p>
             <ul>
-                <li>Score 1: 3,006 essays (21%)</li>
                 <li>Score 2: 6,000 essays (42%)</li>
                 <li>Score 3: 4,422 essays (31%)</li>
+                <li>Score 1: 3,006 essays (21%)</li>
                 <li>Score 4: 806 essays (6%)</li>
                 <li>Score 5: 70 essays (0.5%)</li>
             </ul>
 
-            <p style="margin: 20px 0; padding: 15px; background: var(--teal-light); border-left: 4px solid var(--teal); border-radius: 4px; font-style: italic; color: var(--gray);">
-            Note: You should create a bar chart visualization of this distribution to add here - it would be much more impactful than the list.
-            </p>
+            <h3>The Imbalance Choice</h3>
+            <p><strong>Conventional ML wisdom: balance your classes.</strong><br>
+            <strong>My choice: keep the imbalance.</strong></p>
 
-            <p>Traditional machine learning wisdom says to balance your classes through oversampling, undersampling, or synthetic data generation. I made a deliberate choice not to do this. Here's why:</p>
+            <p>Why? The fellowship is hard in a specific way. Most candidates are somewhere in the middle. Having 42% of essays scored as "2" meant the model saw tons of examples of "just meeting the bar." This imbalance encodes exactly the signal I needed: strong detection of at-risk candidates.</p>
 
-            <p>My experience as a Fellow taught me something: <strong>The fellowship is hard in a very specific way.</strong> It's not about exceptional moments of grit—it's about showing up consistently when things are difficult. The selection team doesn't need to identify the top 5% of candidates. They need to filter out the bottom 20-40% who are at high risk of leaving.</p>
+            <h3>The Model: RoBERTa + Probability Distributions</h3>
+            <p>Fine-tuned RoBERTa-base (125M parameters) with a critical architectural choice: output probability distributions instead of hard classifications.</p>
 
-            <p>Having 42% of essays scored as "2" meant the model saw tons of examples of what "just meeting the bar" looks like. This imbalance wasn't a bug—it was encoding exactly the signal I needed. More low-score examples meant better signal for identifying candidates likely to attrit.</p>
+            <p><strong>Instead of:</strong> "This essay is a 2"<br>
+            <strong>We get:</strong> "P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%"</p>
 
-            <h3>Model Architecture: RoBERTa-Base</h3>
+            <p>This uncertainty quantification became crucial in production. Even humans disagree on borderline cases—when the model is uncertain, those essays go to human review.</p>
 
-            <p>I fine-tuned RoBERTa-base (a 125M parameter transformer model) on the grit trait. The key architectural choice was the output layer: instead of outputting a single class prediction, the model outputs a probability distribution across all five scores.</p>
+            <img src="images/loss_curve_grit.png" alt="Training loss curves showing convergence over 4 epochs" style="max-width: 600px;">
 
-            <p>This means for any given essay, I get:</p>
-            
-            <pre><code>P(score=1) = 0.12
-P(score=2) = 0.68
-P(score=3) = 0.18
-P(score=4) = 0.02
-P(score=5) = 0.00</code></pre>
+            <h3>The Metric Choice: Recall on Low Scores</h3>
+            <p><strong>Not optimizing for overall accuracy.</strong> Optimizing for: <strong>Can we catch candidates at risk of leaving?</strong></p>
 
-            <p>Rather than just "this essay is a 2," I get "the model is 68% confident this is a 2, but there's an 18% chance it could be a 3."</p>
+            <p>This means maximizing recall on scores 1-2 (the critical class), even if it means lower overall accuracy.</p>
 
-            <p>This uncertainty quantification became crucial in production. Because remember: even humans disagree on borderline cases. If the model is uncertain, that's valuable information—those essays should go to human review.</p>
+            <!-- E. RESULTS -->
+            <h2>Results</h2>
 
-            <img src="images/probability_distribution_examples.png" alt="Three examples of probability distributions: high confidence correct, high confidence incorrect, and high uncertainty" style="width: 100%; max-width: 900px; margin: 30px auto; display: block; border: 1px solid var(--gray-lighter); border-radius: 8px;">
+            <p>I trained two models to validate the approach:</p>
 
-            <p style="font-size: 0.95rem; color: var(--gray); text-align: center; margin-top: -20px; margin-bottom: 30px;">
-            Three real examples from the DeBERTa test set: When the model is confident and correct, confident but wrong, and genuinely uncertain.
-            </p>
-
-            <h3>Training</h3>
-
-            <p>The model was trained for 4 epochs using standard cross-entropy loss. The loss curves show healthy convergence:</p>
-
-            <img src="loss_curve_grit.png" alt="Training and validation loss curves for grit model" style="width: 100%; max-width: 600px; margin: 30px auto; display: block; border: 1px solid var(--gray-lighter); border-radius: 8px;">
-
-            <p>Training loss decreases steadily from 1.42 to 1.06, showing the model is learning effectively. Validation loss plateaus around 1.37-1.45 after epoch 2, indicating some overfitting but acceptable generalization. The gap between training and validation loss is reasonable for this task, and early stopping at epoch 3-4 prevents further overfitting.</p>
-
-            <h2>Results: Optimizing for the Right Metric</h2>
-
-            <h3>RoBERTa Performance</h3>
-
-            <p>The final RoBERTa model achieved:</p>
-
+            <p><strong>RoBERTa</strong> (production model):</p>
             <ul>
-                <li><strong>Overall accuracy: 49%</strong> (5-class problem)</li>
-                <li><strong>Weighted F1: 0.50</strong></li>
-                <li><strong>Class 1 recall: 63%</strong> (critical for identifying high-risk candidates)</li>
-                <li><strong>Class 2 recall: 44%</strong></li>
+                <li>14k essays, natural imbalance</li>
+                <li>49% overall accuracy</li>
+                <li><strong>63% recall on score 1</strong> (catching at-risk candidates)</li>
             </ul>
 
-            <img src="images/confusion_matrix.png" alt="RoBERTa confusion matrix showing strong performance on low scores" style="width: 100%; max-width: 600px; margin: 30px auto; display: block; border: 1px solid var(--gray-lighter); border-radius: 8px;">
-
-            <p style="font-size: 0.95rem; color: var(--gray); text-align: center; margin-top: -20px; margin-bottom: 30px;">
-            RoBERTa confusion matrix: Note the strong diagonal on classes 1-2, showing the model excels at identifying low scores.
-            </p>
-
-            <p>49% accuracy sounds mediocre. In a typical machine learning course, this would be a failing grade. But here's where my experience as a Fellow informed the evaluation: <strong>What matters isn't predicting all scores correctly—it's confidently identifying candidates who are likely to leave.</strong></p>
-
-            <h3>The DeBERTa Experiment</h3>
-
-            <p>To validate my approach, I tried an alternative: DeBERTa with more balanced class sampling. I used 10,000 essays and rebalanced the distribution to give the model more examples of high-scoring essays. The hypothesis was that seeing more diversity across all score levels would improve overall performance.</p>
-
-            <p>DeBERTa performed better by traditional metrics:</p>
-
+            <p><strong>DeBERTa</strong> (balanced alternative):</p>
             <ul>
-                <li><strong>Overall accuracy: 52%</strong></li>
-                <li><strong>Macro F1: 0.46</strong></li>
-                <li><strong>QWK (Quadratic Weighted Kappa): 0.60</strong></li>
-                <li>Much better recall on high scores (Class 4: 67%, Class 5: 29%)</li>
+                <li>10k essays, rebalanced distribution</li>
+                <li>52% overall accuracy ✓</li>
+                <li><strong>43% recall on score 1</strong> ✗</li>
             </ul>
 
-            <img src="images/deberta_confusion_matrix.png" alt="DeBERTa confusion matrix showing more balanced performance across all classes" style="width: 100%; max-width: 600px; margin: 30px auto; display: block; border: 1px solid var(--gray-lighter); border-radius: 8px;">
+            <img src="images/results_composite.png" alt="Comparison showing RoBERTa outperforms DeBERTa on critical low-score detection despite lower overall accuracy">
 
-            <p style="font-size: 0.95rem; color: var(--gray); text-align: center; margin-top: -20px; margin-bottom: 30px;">
-            DeBERTa confusion matrix: Better overall balance, but weaker on class 1 detection.
-            </p>
+            <p><strong>The "worse" model by traditional metrics was better for the actual task.</strong></p>
 
-            <img src="images/class_wise_performance.png" alt="Per-class precision, recall, and F1 scores for DeBERTa" style="width: 100%; max-width: 800px; margin: 30px auto; display: block; border: 1px solid var(--gray-lighter); border-radius: 8px;">
+            <p>DeBERTa is better at predicting high scores, but those candidates pass through regardless. RoBERTa is 20 percentage points better at identifying low scores—the actual task that matters.</p>
 
-            <p style="font-size: 0.95rem; color: var(--gray); text-align: center; margin-top: -20px; margin-bottom: 30px;">
-            DeBERTa's per-class performance shows strong recall on class 4 (67%) but weaker on class 1 (43%).
-            </p>
+            <p><strong>Takeaway:</strong> Optimize for the business problem, not the ML metric. My experience as a Fellow gave me the context to know which metric actually mattered.</p>
 
-            <p>On paper, DeBERTa was the better model. But when I looked at what actually mattered for the selection task, the picture flipped:</p>
-
-            <table style="border-collapse: collapse; margin: 20px 0;">
-                <tr style="border-bottom: 2px solid #e5e5e5;">
-                    <th style="padding: 10px; text-align: left;">Model</th>
-                    <th style="padding: 10px; text-align: left;">Class 1 Recall</th>
-                    <th style="padding: 10px; text-align: left;">Class 2 Recall</th>
-                    <th style="padding: 10px; text-align: left;">Overall Accuracy</th>
-                </tr>
-                <tr style="border-bottom: 1px solid #e5e5e5;">
-                    <td style="padding: 10px;"><strong>RoBERTa</strong></td>
-                    <td style="padding: 10px; color: #10b981; font-weight: 700;">63%</td>
-                    <td style="padding: 10px; color: #10b981; font-weight: 700;">44%</td>
-                    <td style="padding: 10px;">49%</td>
-                </tr>
-                <tr>
-                    <td style="padding: 10px;"><strong>DeBERTa</strong></td>
-                    <td style="padding: 10px;">43%</td>
-                    <td style="padding: 10px;">41%</td>
-                    <td style="padding: 10px; color: #10b981; font-weight: 700;">52%</td>
-                </tr>
-            </table>
-
-            <p><strong>RoBERTa is 20 percentage points better at identifying low-scoring essays.</strong> DeBERTa is better at predicting high scores, but those candidates will pass through regardless. What we need is to catch the candidates who are at risk—and RoBERTa does that dramatically better.</p>
-
-            <p>This is why I deployed RoBERTa to production despite its "worse" overall accuracy. Having taught 200 students and seen the impact of teacher attrition firsthand, I knew which metric actually mattered. <strong>It's not about being right more often—it's about being right when it matters most.</strong></p>
-
-            <h2>Production Deployment and Impact</h2>
-
-            <h3>The Human-in-the-Loop System</h3>
-
-            <p>The model doesn't make final decisions. Instead, it feeds into a rule-based filtering system that combines grit predictions with other application data (test scores, grades, work experience, word count) to flag essays for manual review.</p>
-
-            <p>For example, essays might be flagged if:</p>
-            <ul>
-                <li>grit score ≥ 3 AND strong academics BUT model confidence < 70%</li>
-                <li>Low grit score but exceptional performance on other dimensions</li>
-                <li>Contradictory signals across different parts of the application</li>
-            </ul>
-
-            <p>The probability distributions are critical here. Look at these examples from production:</p>
-
-            <p><strong>High confidence rejection:</strong></p>
-            <pre><code>P(1)=88%, P(2)=9%, P(3)=2%, P(4)=0%, P(5)=0%
-→ Clear low score, 97% confidence
-→ No manual review needed</code></pre>
-
-            <p><strong>Uncertain case:</strong></p>
-            <pre><code>P(1)=11%, P(2)=46%, P(3)=33%, P(4)=10%, P(5)=0%
-→ Most likely a 2, but 33% chance it's a 3
-→ Flag for human review</code></pre>
-
-            <p>This uncertainty quantification enables the selection team to focus their expertise where it matters most: borderline cases where even the model isn't sure. Just like how even experienced evaluators would want a second opinion on these essays.</p>
+            <!-- F. PRODUCTION & IMPACT -->
+            <h2>Production & Impact</h2>
 
             <h3>Deployment Architecture</h3>
-
-            <p>The model is deployed on HuggingFace Spaces using a simple Flask backend. It's free tier hosting, which works well for batch processing:</p>
-
             <ul>
-                <li>Weekly batch processing of ~300 essays during regular periods</li>
-                <li>Twice weekly during deadline periods (600 essays/week)</li>
-                <li>Cold starts aren't an issue since we're not doing real-time inference</li>
+                <li>HuggingFace Spaces (free tier) + Flask backend</li>
+                <li>Weekly batch processing: ~300 essays (regular), ~600 (deadline periods)</li>
+                <li>5 months in production: 10,000-15,000 essays processed</li>
+                <li>Cold starts aren't an issue for batch processing</li>
             </ul>
 
-            <p>Over 5 months in production, the system has processed an estimated 10,000-15,000 essays based on weekly usage patterns.</p>
+            <h3>Human-in-the-Loop System</h3>
+            <p>Model outputs feed into rule-based filtering combining essay scores with application data. Probability distributions enable intelligent flagging:</p>
 
-            <h3>Impact on the Selection Team</h3>
+            <pre><code>High confidence rejection:
+P(1)=88%, P(2)=9%, P(3)=2%
+→ Clear low score, no review needed
 
-            <p>Before automation:</p>
+Uncertain case:
+P(1)=11%, P(2)=46%, P(3)=33%
+→ Most likely a 2, but could be 3
+→ Flag for human review</code></pre>
+
+            <img src="images/example_probability_distributions.png" alt="Real examples showing high confidence correct, high confidence wrong, and uncertain predictions">
+
+            <h3>Impact Metrics</h3>
+            <p><strong>Before automation:</strong></p>
             <ul>
                 <li>3 team members manually scoring essays</li>
-                <li>2 hours per week during regular periods</li>
-                <li>10 hours per week during deadline periods</li>
-                <li>Total: 6-30 person-hours per week on initial screening</li>
+                <li>2-10 hours per week depending on volume</li>
+                <li>6-30 person-hours per week on initial screening</li>
             </ul>
 
-            <p>After automation:</p>
+            <p><strong>After automation:</strong></p>
             <ul>
                 <li>Model processes 300 essays in ~5 minutes</li>
-                <li>Team focuses only on flagged cases (typically 20-30% of essays)</li>
-                <li>Estimated time savings: 60% reduction in manual screening work</li>
+                <li>Team focuses only on flagged cases (20-30%)</li>
+                <li><strong>60% reduction in manual screening work</strong></li>
             </ul>
 
-            <p>More importantly: <strong>The selection team can now invest their expertise in nuanced evaluations rather than mechanical scoring.</strong> They're not replaced—they're empowered to focus on the cases that genuinely need human judgment.</p>
+            <p><strong>More importantly:</strong> The selection team can now invest their expertise in nuanced evaluations rather than mechanical scoring.</p>
 
-            <h3>Model Calibration: Does Confidence Mean Accuracy?</h3>
+            <h3>Production Validation (5 Months)</h3>
+            <p>Analyzed 1,443 essays from one complete application round:</p>
+            <ul>
+                <li><strong>471 (33%)</strong> filtered out automatically</li>
+                <li><strong>972 (67%)</strong> sent to human review</li>
+            </ul>
 
-            <p>One critical question: When the model says it's 70% confident, is it actually right 70% of the time? This calibration matters because the filtering system relies on confidence thresholds.</p>
+            <img src="images/system_flow_diagram.png" alt="System flow showing 1443 essays → 471 filtered + 972 reviewed → outcomes">
 
-            <img src="images/confidence_vs_accuracy.png" alt="Model accuracy increases with confidence level" style="width: 100%; max-width: 800px; margin: 30px auto; display: block; border: 1px solid var(--gray-lighter); border-radius: 8px;">
+            <p>Of the 972 reviewed:</p>
+            <ul>
+                <li><strong>45% exact accuracy</strong> (predicting exact human score)</li>
+                <li><strong>91% within-1 accuracy</strong> (within one score)</li>
+                <li><strong>65% scored 3+</strong> (appropriately passed)</li>
+                <li><strong>35% scored 1-2</strong> (at-risk candidates that needed review)</li>
+            </ul>
 
-            <p>The data from the DeBERTa test set shows that <strong>confidence is a reliable signal</strong>. When the model is 60-70% confident, accuracy jumps to 65%. The model's uncertainty is honest—low confidence predictions really are less reliable and benefit from human review.</p>
+            <img src="images/calibration_analysis.png" alt="Calibration showing confidence correlates with accuracy" style="max-width: 700px;">
 
-            <img src="images/error_analysis.png" alt="Scatter plot showing incorrect predictions have higher entropy" style="width: 100%; max-width: 900px; margin: 30px auto; display: block; border: 1px solid var(--gray-lighter); border-radius: 8px;">
+            <p>The 35% "false positive" rate reflects conservative design: when uncertain, flag for review rather than auto-reject.</p>
 
-            <p style="font-size: 0.95rem; color: var(--gray); text-align: center; margin-top: -20px; margin-bottom: 30px;">
-            Incorrect predictions (red X) tend to cluster in higher entropy regions—the model knew it was uncertain.
-            </p>
+            <!-- G. LESSONS LEARNED -->
+            <h2>Lessons Learned</h2>
 
-            <h2>Challenges and Lessons Learned</h2>
+            <h3>1. Task Definition > Accuracy</h3>
+            <p>A model with 49% accuracy beat one with 52% because it solved the right problem. If I'd optimized for overall accuracy, I would've deployed the wrong model. My experience as a Fellow gave me the context to know that false negatives (rejecting good candidates) are recoverable through review, but false positives (accepting candidates who leave) directly harm students.</p>
 
-            <h3>1. Your Task Definition Matters More Than Your Accuracy</h3>
-
-            <p>The biggest lesson: <strong>Optimize for the business problem, not the ML metric.</strong> A model with 49% accuracy beat a model with 52% accuracy because it was better at what actually mattered—identifying candidates at risk of leaving.</p>
-
-            <p>If I'd optimized for overall accuracy without understanding the downstream impact, I would've deployed the wrong model. My experience as a Fellow gave me the context to know that false negatives (rejecting good candidates) are recoverable through human review, but false positives (accepting candidates who leave) directly harm students.</p>
-
-            <h3>2. Class Imbalance as Feature, Not Bug</h3>
-
-            <p>Conventional ML wisdom says to balance your classes. But imbalance can encode valuable information about the task.</p>
-
-            <p>Having 42% of essays scored as "2" reflected reality: most applicants are somewhere in the middle. The fellowship is hard—not everyone will thrive, but not everyone will fail either. The model seeing tons of "just meeting the bar" examples made it better at distinguishing between "2" (at risk) and "3" (likely to persist).</p>
-
-            <p>The key is understanding what your model needs to learn. For filtering high-risk candidates, you want strong signal on low scores.</p>
+            <h3>2. Class Imbalance as Signal</h3>
+            <p>Having 42% score-2 essays reflected reality: most applicants are in the middle. The fellowship is hard—not everyone thrives, but not everyone fails. The model seeing tons of "just meeting the bar" examples made it better at distinguishing score 2 (at risk) from score 3 (likely to persist).</p>
 
             <h3>3. Probability Distributions > Hard Classifications</h3>
+            <p>Outputting probability distributions enabled confidence-based filtering, natural integration with human review workflows, and transparency about uncertainty—critical when decisions affect people's futures. Even humans disagree on borderline cases. A model that says "I'm uncertain" is more valuable than one forcing predictions.</p>
 
-            <p>Outputting probability distributions instead of hard classifications was crucial. It enabled:</p>
-            <ul>
-                <li>Confidence-based filtering rules tailored to organizational needs</li>
-                <li>Natural integration with human review workflows</li>
-                <li>Transparency about model uncertainty (critical when decisions affect people's futures)</li>
-            </ul>
+            <h3>4. Free Hosting for Nonprofit Budgets</h3>
+            <p>HuggingFace Spaces free tier works for batch processing despite limitations (cold starts, potential downtime). Design your system to tolerate constraints: batch weekly instead of real-time, accept occasional cold starts, maintain fallback manual processes. Not every ML system needs enterprise infrastructure.</p>
 
-            <p>This approach acknowledges reality: even humans disagree on borderline cases. A model that says "I'm uncertain" is often more valuable than one that forces a prediction.</p>
+            <h3>5. Human Context Shapes Technical Decisions</h3>
+            <p>Every technical choice—keeping class imbalance, optimizing for recall on low scores, outputting probability distributions—was informed by understanding the human impact. I knew what it felt like to want to quit. I knew what happened to students when teachers left. That context shaped the model in ways purely technical optimization never would.</p>
 
-            <h3>4. Production ML on a Nonprofit Budget</h3>
-
-            <p>HuggingFace Spaces free tier has limitations (cold starts, potential downtime), but it's viable for organizations without ML infrastructure budgets. The key is designing your system to tolerate these constraints.</p>
-
-            <p>Batch processing weekly instead of real-time inference, accepting occasional cold starts, and having fallback manual processes makes this work. Not every ML system needs enterprise infrastructure.</p>
-
-            <h3>5. The Human Element of Technical Decisions</h3>
-
-            <p>Every technical choice in this project—keeping class imbalance, optimizing for recall on low scores, outputting probability distributions—was informed by understanding the human impact.</p>
-
-            <p>I knew what it felt like to want to quit. I knew what happened to students when a teacher left. I knew how the selection team actually used these predictions. That context shaped the model in ways that purely technical optimization never would have.</p>
-
+            <!-- H. WHAT'S NEXT -->
             <h2>What's Next</h2>
 
-            <p>The model has been running successfully for 5 months, but there's always room for improvement:</p>
+            <p>The model has been running successfully for 5 months. Next steps:</p>
 
             <ul>
-                <li><strong>Monitoring production performance:</strong> Collecting feedback from evaluators on flagged cases to measure real-world calibration</li>
-                <li><strong>Iterating on filtering rules:</strong> Adjusting confidence thresholds based on team workflows and attrition data from recent cohorts</li>
-                <li><strong>Exploring ensemble approaches:</strong> Combining predictions across multiple traits to improve overall candidate assessment</li>
-                <li><strong>Expanding to other traits:</strong> Applying similar approaches to other dimensions of the selection rubric</li>
+                <li><strong>Production monitoring:</strong> Collecting feedback from evaluators on flagged cases to measure real-world calibration and adjust confidence thresholds based on attrition data from recent cohorts</li>
+                <li><strong>Expanding scope:</strong> Applying similar uncertainty-based approaches to other traits in the selection rubric, potentially building ensemble models that combine predictions across multiple dimensions</li>
             </ul>
 
-            <h2>Conclusion: Building ML That Matters</h2>
-
-            <p>This project taught me that building production ML systems isn't just about maximizing accuracy on a test set. It's about deeply understanding the problem you're solving, choosing the right metrics to optimize, and designing systems that integrate naturally with human workflows.</p>
-
-            <p>My two years as a Teaching Fellow weren't just context for this project—they were foundational to it. I knew what was at stake. I knew that when the model got it wrong, real kids in real classrooms would pay the price. That knowledge shaped every technical decision.</p>
-
-            <p>The "worse" model by traditional metrics was better for the actual task. By preserving class imbalance, outputting probability distributions, and optimizing for low-score detection, we built a system that's been processing thousands of essays in production for months—saving the selection team hundreds of hours while maintaining the rigor needed to protect students from teacher attrition.</p>
-
-            <p><strong>Sometimes the best ML model isn't the one with the highest accuracy. It's the one that solves the right problem in a way that respects both the data and the humans involved.</strong></p>
+            <!-- I. KICKER -->
+            <div class="kicker">
+                Sometimes the best ML model isn't the one with the highest accuracy. It's the one that keeps teachers in classrooms and keeps promises to kids who deserve better.
+            </div>
 
         </div>
     </article>
