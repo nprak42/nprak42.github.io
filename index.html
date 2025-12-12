@@ -232,6 +232,15 @@
             align-items: start;
             gap: 20px;
         }
+        
+        .card-header-link{
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+        }
+
+
 
         .card-info {
             flex: 1;
@@ -549,7 +558,7 @@
             <div class="currently-grid">
                 <div class="currently-item">
                     <h3>Reading</h3>
-                    <p>Pact and Pattern Trilogy</p>
+                    <p>Pattern of the world</p>
                 </div>
                 <div class="currently-item">
                     <h3>Learning</h3>
@@ -785,20 +794,29 @@
                 </div>
 
                 <!-- UNHRC Research -->
-                <div class="card" onclick="toggleCard(this)">
+                <div class="card">
                     <div class="card-header">
-                        <div class="card-info">
-                            <h3>Civil Society Network Analysis</h3>
-                            <p class="card-description">Data scraping from UN Human Rights Council documents to create network visualizations exploring civil society engagement and participation patterns</p>
-                            <div class="tech-stack">
-                                <span class="tech-tag">Python</span>
-                                <span class="tech-tag">NetworkX</span>
-                                <span class="tech-tag">Web Scraping</span>
-                                <span class="tech-tag">R/igraph</span>
+                        <a href="https://github.com/nprak42/upr-network-analysis" 
+                           target="_blank" 
+                           class="card-header-link">
+                            <div class="card-info">
+                                <h3>Civil Society Network Analysis</h3>
+                                <p class="card-description">
+                                    Data scraping from UN Human Rights Council documents to create network visualizations exploring civil society engagement and participation patterns
+                                </p>
+                                <div class="tech-stack">
+                                    <span class="tech-tag">Python</span>
+                                    <span class="tech-tag">NetworkX</span>
+                                    <span class="tech-tag">Web Scraping</span>
+                                    <span class="tech-tag">R/igraph</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="expand-icon">+</div>
+                        </a>
+                
+                        <!-- The expand icon remains clickable for toggling -->
+                        <div class="expand-icon" onclick="toggleCard(this)">+</div>
                     </div>
+                
                     <div class="card-details">
                         <div class="card-details-content">
                             <div class="detail-section placeholder">
@@ -807,7 +825,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
