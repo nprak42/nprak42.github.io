@@ -14,11 +14,11 @@
         :root {
             --teal: #5eadbd;
             --teal-light: #e6f7f9;
-            --gray: #6b6b6b;
-            --gray-light: #a3a3a3;
+            --gray: #6b6b6b54;
+            --gray-light: #ffd599;
             --gray-lighter: #e5e5e5;
             --text: #2a2a2a;
-            --bg: #ffffff;
+            --bg: hsl(184, 100%, 85%);
         }
 
         [data-theme="dark"] {
@@ -466,10 +466,39 @@
         }
 
         /* Skills */
-        .skills-text {
-            font-size: 1.1rem;
-            line-height: 1.9;
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 35px;
+        }
+
+        .skill-category h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--teal);
+            letter-spacing: -0.01em;
+        }
+
+        .skill-category ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .skill-category li {
+            font-size: 1rem;
+            line-height: 2;
             color: var(--gray);
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .skill-category li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--teal);
+            font-weight: bold;
         }
 
         /* Contact */
@@ -628,7 +657,7 @@
         <div class="container">
             <h1>Niranjan Prakash</h1>
             <p class="tagline">Building ML systems for education and impact</p>
-            <p class="intro">I specialize in building automated data pipelines and machine learning solutions that solve real-world problems. From reducing manual work by 60% to processing thousands of log files daily, I create systems that make a difference.</p>
+            <p class="intro">I specialize in building automated data pipelines and machine learning solutions that solve real-world problems. I love working with text and networks and often think about expressing one as the other. In my spare time you can find me.</p>
         </div>
     </section>
 
@@ -650,31 +679,6 @@
                 <img src="cg_school_full.jpg" alt="Students of CG" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
                 <img src="cg_school.jpg" alt="CG Assembly Grades 7-12" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
                 <img src="cg_10A.jpg" alt="CG 10 A class photo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
-            </div>
-        </div>
-    </section>
-
-    <!-- Currently Section -->
-    <section id="currently">
-        <div class="container">
-            <h2>Currently</h2>
-            <div class="currently-grid">
-                <div class="currently-item currently-reading">
-                    <h3>Reading</h3>
-                    <p>Pattern of the world</p>
-                </div>
-                <div class="currently-item currently-learning">
-                    <h3>Learning</h3>
-                    <p>NLP and deploying ML models on HF Spaces</p>
-                </div>
-                <div class="currently-item currently-watching">
-                    <h3>Watching</h3>
-                    <p>The Mighty Nein</p>
-                </div>
-                <div class="currently-item currently-playing">
-                    <h3>Playing</h3>
-                    <p>Hollow Knight Silksong</p>
-                </div>
             </div>
         </div>
     </section>
@@ -875,9 +879,6 @@
                 
                     <div class="card-details">
                         <div class="card-details-content">
-                            <div class="detail-section placeholder">
-                                Content coming soon - will include research question, scraping methodology, network construction approach, visualization examples, and key findings about collaboration patterns
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -889,7 +890,60 @@
     <section id="skills">
         <div class="container">
             <h2>Skills</h2>
-            <p class="skills-text">I build machine learning pipelines using Python, PyTorch, and scikit-learn, deploy them with Docker and cloud platforms, and communicate insights through interactive dashboards. Comfortable with R for statistical analysis and network modeling, SQL for data management, and wrangling messy data at scale.</p>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Machine Learning</h3>
+                    <ul>
+                        <li>PyTorch</li>
+                        <li>scikit-learn</li>
+                        <li>Transformers (HuggingFace)</li>
+                        <li>NLP & Text Analysis</li>
+                    </ul>
+                </div>
+                <div class="skill-category">
+                    <h3>Data & Analytics</h3>
+                    <ul>
+                        <li>Python</li>
+                        <li>R </li>
+                        <li>SQL</li>
+                        <li>Network Analysis</li>
+                    </ul>
+                </div>
+                <div class="skill-category">
+                    <h3>MLOps & Deployment</h3>
+                    <ul>
+                        <li>Docker</li>
+                        <li>Flask APIs</li>
+                        <li>Cloud Platforms</li>
+                        <li>Git & Version Control</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Currently Section -->
+    <section id="currently">
+        <div class="container">
+            <h2>Currently</h2>
+            <div class="currently-grid">
+                <div class="currently-item currently-reading">
+                    <h3>Reading</h3>
+                    <p>Pattern of the world</p>
+                </div>
+                <div class="currently-item currently-learning">
+                    <h3>Learning</h3>
+                    <p>Multivariate Statistics</p>
+                </div>
+                <div class="currently-item currently-watching">
+                    <h3>Watching</h3>
+                    <p>The Mighty Nein</p>
+                </div>
+                <div class="currently-item currently-playing">
+                    <h3>Playing</h3>
+                    <p>Hollow Knight Silksong</p>
+                </div>
+            </div>
         </div>
     </section>
 
