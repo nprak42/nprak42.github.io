@@ -383,7 +383,7 @@
                 <li><strong>43% recall on score 1</strong> ✗</li>
             </ul>
 
-            <img src="images/results_composite.png" alt="Comparison showing RoBERTa outperforms DeBERTa on critical low-score detection despite lower overall accuracy">
+            <img src="images/confusion_matrix_roberta.png" alt="Comparison showing RoBERTa outperforms DeBERTa on critical low-score detection despite lower overall accuracy">
 
             <p><strong>The "worse" model by traditional metrics was better for the actual task.</strong></p>
 
@@ -414,7 +414,7 @@ P(1)=11%, P(2)=46%, P(3)=33%
 → Most likely a 2, but could be 3
 → Flag for human review</code></pre>
 
-            <img src="images/example_probability_distributions.png" alt="Real examples showing high confidence correct, high confidence wrong, and uncertain predictions">
+            <img src="images/roberta_final_confidence_distribution.png" alt="Real examples showing high confidence correct, high confidence wrong, and uncertain predictions">
 
             <h3>Impact Metrics</h3>
             <p><strong>Before automation:</strong></p>
@@ -450,7 +450,7 @@ P(1)=11%, P(2)=46%, P(3)=33%
                 <li><strong>35% scored 1-2</strong> (at-risk candidates that needed review)</li>
             </ul>
 
-            <img src="images/calibration_analysis.png" alt="Calibration showing confidence correlates with accuracy" style="max-width: 700px;">
+            <img src="images/roberta_final_calibration_curve.png" alt="Calibration showing confidence correlates with accuracy" style="max-width: 700px;">
 
             <p>The 35% "false positive" rate reflects conservative design: when uncertain, flag for review rather than auto-reject.</p>
 
