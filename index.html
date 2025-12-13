@@ -21,6 +21,16 @@
             --bg: #ffffff;
         }
 
+        [data-theme="dark"] {
+            --teal: #7ec5d4;
+            --teal-light: #1a3d44;
+            --gray: #b0b0b0;
+            --gray-light: #8a8a8a;
+            --gray-lighter: #3a3a3a;
+            --text: #e8e8e8;
+            --bg: #1a1a1a;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             background: var(--bg);
@@ -71,6 +81,25 @@
 
         nav .nav-links a:hover {
             color: var(--teal);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--gray-lighter);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--teal);
+            background: var(--teal-light);
         }
 
         .container {
@@ -581,11 +610,16 @@
     <nav>
         <div class="container">
             <a href="#hero" class="logo">Niranjan Prakash</a>
-            <ul class="nav-links">
-                <li><a href="#hero">Home</a></li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+            <div style="display: flex; align-items: center; gap: 25px;">
+                <ul class="nav-links">
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <span class="theme-icon">☀️</span>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -873,6 +907,23 @@
     </section>
 
     <script>
+        // Dark mode toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.querySelector('.theme-icon');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', currentTheme);
+        themeIcon.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+
+        themeToggle.addEventListener('click', () => {
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+        });
+
         // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
