@@ -310,12 +310,12 @@
 
             <p>Not every Fellow makes it through the two-year commitment. And when they don't, the students pay the price. Disrupted learning, lost relationships, and the message that maybe they're not worth sticking around for.</p>
 
-            <p>The data backs this up: <strong>Fellows who score low on a trait, specifically 'grit', are nearly twice as likely to leave before completing their commitment</strong> compared to those who meet the bar.</p>
+            <p>The data backs this up: <strong>Fellows who score low on a trait, specifically 'grit', are nearly twice as likely to leave before completing their commitment</strong> compared to those who meet the bar. (Duckworth et al., 2007)</p>
 
             <h3>The Research Question</h3>
             <p>Can we build a machine learning model that identifies at-risk candidates from their application essays—not to replace human judgment, but to focus expert evaluators on cases that matter most?</p>
 
-            <p>This paper presents a fine-tuned RoBERTa model that processes 20,000+ annual applications, achieving 63% recall on at-risk candidates while reducing manual screening workload by 60%. More importantly, it demonstrates how optimizing for the right metric—not the highest accuracy—can create real-world impact when human context shapes technical decisions.</p>
+            <p>This blog goes over a fine-tuned RoBERTa model that is capable of processing 20,000+ applications anually, achieving 63% recall on at-risk candidates while reducing manual screening workload by 60%. More importantly, it demonstrates how optimizing for the right metric, not the highest accuracy, can create real-world impact when human context shapes technical decisions.</p>
 
             <!-- B. Background & Related Work -->
             <h2>Background & Related Work</h2>
@@ -327,7 +327,7 @@
             <p><strong>The Gap:</strong> Existing approaches don't address the asymmetric cost structure of educational selection, where false positives (accepting candidates who leave) have far greater consequences than false negatives (flagging strong candidates for review). This work explicitly optimizes for catching at-risk candidates, even at the cost of overall accuracy.</p>
 
             <h3>Why Not ChatGPT?</h3>
-            <p>Before diving into the technical approach, it's worth addressing the obvious question: why build a custom model when ChatGPT exists?</p>
+            <p>Before diving into the technical approach, it's worth addressing an obvious question: why build a custom model when ChatGPT exists?</p>
 
             <p>Three reasons:</p>
             <ul>
@@ -340,7 +340,7 @@
             <h2>Data</h2>
 
             <h3>Dataset Description</h3>
-            <p>The dataset comprises 14,000 labeled essays from Teach For India fellowship applications spanning 2021-2023. Each essay responds to the prompt: <em>"Describe a time where you had to push yourself and overcome challenges to succeed. This commitment could be from your professional or extracurricular experiences."</em></p>
+            <p>The dataset comprises 23,000 labeled essays from Teach For India fellowship applications spanning 2021-2023. Each essay responds to the prompt: <em>"Describe a time where you had to push yourself and overcome challenges to succeed. This commitment could be from your professional or extracurricular experiences."</em></p>
 
             <p>Additional constraints on the experience: (a) it must not be a personal experience, and (b) must be at least a month-long commitment.</p>
 
@@ -355,7 +355,7 @@
 
             <p>The data was split 80/20 into training (11,200) and test sets (2,800). The class distribution was severely imbalanced:</p>
 
-            <img src="images/class_distribution.png" alt="[FIGURE 1: Bar chart showing class distribution with percentages - Score 2: 42%, Score 3: 31%, Score 1: 21%, Score 4: 6%, Score 5: 0.5%]" style="max-width: 700px;">
+            <img src="images/essay_class_distribution.png" alt="Bar chart showing class distribution - Score 2: 42%, Score 3: 31%, Score 1: 21%, Score 4: 6%, Score 5: 0.5%" style="max-width: 700px;">
 
             <ul>
                 <li>Score 2: 6,000 essays (42%)</li>
@@ -374,32 +374,19 @@
 
             <h3>Essay Length Distribution</h3>
 
-            <img src="images/essay_length_boxplot.png" alt="[FIGURE 2: Box plot of essay length (word count) by score, showing clear separation between scores 1-2 vs 3-5]" style="max-width: 700px;">
+            <img src="images/essay_length_boxplot.png" alt="Box plot of essay length by score, showing clear separation - Score 1: 274 words, Score 2: 259 words, Score 3: 318 words, Score 4: 431 words, Score 5: 538 words" style="max-width: 700px;">
 
             <p>A striking pattern emerged: essay length correlates strongly with score. Score 1 essays averaged 287 words, score 2 averaged 412 words, while scores 3-5 averaged 520+ words. This wasn't about hitting word counts—longer essays provided more complete narratives with context, obstacles, actions, and outcomes. Shorter essays often lacked crucial elements of storytelling.</p>
-
-            <h3>Vocabulary Richness</h3>
-
-            <img src="images/vocabulary_richness.png" alt="[FIGURE 3: Violin plot showing type-token ratio (unique words/total words) across score levels]" style="max-width: 700px;">
-
-            <p>Higher-scoring essays used more diverse vocabulary, particularly in describing emotional states and challenge resolution. Score 3+ essays showed 15-20% higher lexical diversity than score 1-2 essays, suggesting more nuanced reflection on their experiences.</p>
 
             <h3>Preliminary Finding: Content vs. Structure</h3>
             <p>I hypothesized that essay topics would be the strongest predictor—teaching experience would outperform, say, sports achievements. To test this, I applied Latent Dirichlet Allocation (LDA) to extract 8 topics from the corpus.</p>
 
-            <img src="images/topic_distribution_heatmap.png" alt="[FIGURE 4: Heatmap showing topic distribution across score levels. Topics include: Classroom Teaching, Academic Challenges, Sports/Athletics, Family Responsibilities, Social Initiatives, Workplace Projects, Community Service, Leadership Roles]" style="max-width: 700px;">
+            <img src="images/topic_distribution_heatmap.png" alt="Heatmap showing topic distribution across score levels - Topics include: Classroom Teaching, Academic Challenges, Sports/Athletics, Social Initiatives, Workplace Projects, Leadership Roles, Community Service, Team Management" style="max-width: 700px;">
 
             <p><strong>The surprising finding:</strong> Topic distribution was nearly uniform across scores. Essays about classroom teaching weren't rated higher than essays about sports or community work. What mattered was <em>how</em> candidates told their story—the completeness of narrative structure, the specificity of obstacles, and the clarity of their role—not <em>what</em> they wrote about.</p>
 
             <p>This informed a crucial modeling decision: don't rely on topic features. Let the transformer learn nuanced linguistic patterns that capture narrative quality rather than surface-level content.</p>
 
-            <!-- E. MODEL GOAL CALLOUT -->
-            <div class="callout-box">
-                <h3>THE MODEL'S JOB</h3>
-                <p class="emphasis">We do NOT predict who will excel.</p>
-                <p class="emphasis">We flag who will quit.</p>
-                <p>Because the cost of missing that signal is measured in disrupted classrooms.</p>
-            </div>
 
             <!-- F. TECHNICAL APPROACH -->
             <h2>Technical Approach</h2>
@@ -428,6 +415,8 @@ Classification head
 ↓
 Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
 
+            <img src="images/roberta_architecture_simple.png" alt="RoBERTa architecture diagram showing horizontal flow from input text through encoder, pooling, classifier, to probability distribution output">
+
             <p>Instead of returning "This essay is a 2," the model outputs: "68% confident it's a 2, but 18% chance it's a 3." This uncertainty quantification became crucial in production.</p>
 
             <h3>Training Configuration</h3>
@@ -441,16 +430,14 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
             </ul>
 
             <p><strong>Class weights (square root of inverse frequency):</strong></p>
-            <pre><code>weights = {1: 2.0, 2: 1.0, 3: 1.3, 4: 3.5, 5: 10.0}</code></pre>
+            <pre><code>weights = {1: 2.4119, 2: 0.4148, 3: 0.5716, 4: 2.5225, 5: 35.1519}</code></pre>
 
             <p>These modest weights give the model a slight nudge toward minority classes without aggressive rebalancing that would distort the natural distribution.</p>
 
-            <p><strong>Training time:</strong> 3 hours on Google Colab (T4 GPU)</p>
-
-            <img src="images/loss_curve_grit.png" alt="[Training loss curves showing convergence over 4 epochs]" style="max-width: 600px;">
+            <p><strong>Training time:</strong> 3 hours on Kaggle (T4 GPU)</p>
 
             <h3>The Metric Choice: Recall on Low Scores</h3>
-            <p>The model is not optimized for accuracy across all classes. Since our task involves identifying low-potential applicants, we want to optimize for catching candidates at risk of leaving.</p>
+            <p>The model is not optimized for accuracy across all classes. Since the current task involves identifying low-potential applicants, we want to optimize for catching candidates at risk of leaving.</p>
 
             <p>This means maximizing recall on scores 1-2 (the critical class), even if it means lower overall accuracy.</p>
 
@@ -458,7 +445,6 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
             <p>To validate the imbalance strategy, I trained a second model using <strong>DeBERTa-v3-base</strong> with balanced class distribution:</p>
             <ul>
                 <li>Downsampled majority classes (scores 2-3) to 2,000 each</li>
-                <li>Oversampled minority classes to 2,000 each</li>
                 <li>Final dataset: 10,000 essays (vs. 14,000 for RoBERTa)</li>
                 <li>Same hyperparameters otherwise</li>
             </ul>
@@ -485,68 +471,9 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
                 <li><strong>43% recall on score 1-2</strong> ✗</li>
             </ul>
 
-            <img src="images/confusion_matrix_roberta.png" alt="[FIGURE 5: Side-by-side confusion matrices for RoBERTa and DeBERTa on test set]">
-
             <p><strong>The "worse" model by traditional metrics was better for the actual task.</strong></p>
 
             <p>DeBERTa is better at predicting high scores, but those candidates pass through regardless. RoBERTa is <strong>20 percentage points better</strong> at identifying low scores—specifically scores of 1 and 2, which is the critical boundary here.</p>
-
-            <h3>Class-Specific Performance</h3>
-
-            <img src="images/recall_by_score.png" alt="[FIGURE 6: Grouped bar chart showing recall by individual score for both models]" style="max-width: 700px;">
-
-            <p>Breaking down by score reveals the trade-off:</p>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Score</th>
-                        <th>RoBERTa Recall</th>
-                        <th>DeBERTa Recall</th>
-                        <th>Why It Matters</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>63%</td>
-                        <td>43%</td>
-                        <td>Critical: must catch</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>51%</td>
-                        <td>38%</td>
-                        <td>Critical: borderline cases</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>45%</td>
-                        <td>61%</td>
-                        <td>Less critical: pass anyway</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>22%</td>
-                        <td>58%</td>
-                        <td>Doesn't matter: clear pass</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>0%</td>
-                        <td>43%</td>
-                        <td>Doesn't matter: clear pass</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <p>RoBERTa sacrifices performance on scores 4-5 (where it doesn't matter) to gain massive improvements on scores 1-2 (where it's critical).</p>
-
-            <h3>Precision-Recall Trade-off</h3>
-
-            <img src="images/precision_recall_curve.png" alt="[FIGURE 7: Precision-Recall curve for combined 'at-risk' class (scores 1-2) comparing both models]" style="max-width: 700px;">
-
-            <p>The curve shows RoBERTa dominates across all operating points. At any given recall level, RoBERTa achieves 8-12% higher precision than DeBERTa. This matters in production: fewer false positives means less wasted evaluator time.</p>
 
             <p><strong>Takeaway:</strong> Optimize for the business problem, not the ML metric. My prior experience as a Fellow gave me the crucial context to know which metric actually mattered.</p>
 
@@ -577,8 +504,6 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
 → Most likely a 2, but could be 3
 → Flag for human review</code></pre>
 
-            <img src="images/roberta_final_confidence_distribution.png" alt="[Real examples showing high confidence correct, high confidence wrong, and uncertain predictions]">
-
             <h3>Impact Metrics</h3>
             <p><strong>Before automation:</strong></p>
             <ul>
@@ -599,14 +524,12 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
             <!-- I. PRODUCTION VALIDATION -->
             <h2>Production Validation (5 Months)</h2>
 
-            <p>I analyzed 1,443 essays from one complete application round (November 2024) to validate production performance.</p>
-
-            <img src="images/system_flow_diagram.png" alt="[FIGURE 8: Flow diagram showing essay triage: 1,443 total → 471 auto-filtered (33%) → 972 sent to human review (67%)]">
+            <p>I analyzed 1,443 essays from one complete application round (August- November 2025) to validate production performance.</p>
 
             <p><strong>Automatic Filtering:</strong></p>
             <ul>
                 <li>471 essays (33%) filtered out automatically using RoBERTa predictions</li>
-                <li>Threshold: P(1) > 60% OR P(1) + P(2) > 85%</li>
+                <li>Threshold: P(1) > 70% OR P(1) + P(2) > 85%</li>
                 <li>These cases went straight to rejection without human review</li>
             </ul>
 
@@ -618,15 +541,7 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
                 <li>35% scored 1-2 (at-risk candidates that needed review)</li>
             </ul>
 
-            <img src="images/predicted_vs_actual_distribution.png" alt="[FIGURE 9: Comparison of predicted vs. actual score distribution for the 972 reviewed essays]" style="max-width: 700px;">
-
             <p>The 35% "false positive" rate (flagged for review but turned out to be low-scoring) reflects conservative design: when uncertain, flag for review rather than auto-reject. This protects against high-stakes mistakes.</p>
-
-            <h3>Confidence Calibration</h3>
-
-            <img src="images/roberta_final_calibration_curve.png" alt="[FIGURE 10: Reliability diagram showing predicted probability vs. actual frequency for score 2]" style="max-width: 700px;">
-
-            <p>The model is well-calibrated: when it predicts 70% probability of score 2, approximately 68% of those essays actually receive score 2 from humans. This validates using probability thresholds for filtering decisions.</p>
 
             <!-- J. LESSONS LEARNED -->
             <h2>Lessons Learned</h2>
@@ -664,7 +579,7 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
 
             <p>The ultimate validation will come from tracking whether Fellows the model flagged as low-risk actually complete their commitments. That data is still two years away. Until then, the model serves its purpose: focusing expert human judgment where it matters most.</p>
 
-            <p>Because at the end of the day, this isn't about ML metrics. It's about making sure that when a teacher walks into a classroom in Ahmedabad or Mumbai or Delhi, they have the grit to stick it out—so 200 kids don't lose another adult who broke their promise.</p>
+            <p>Because at the end of the day, this isn't about ML metrics. It's about making sure that when a teacher walks into a classroom in Ahhedabad or Mumbai or Delhi, they have the grit to stick it out—so 200 kids don't lose another adult who broke their promise.</p>
 
             <!-- L. REFERENCES -->
             <h2>References</h2>
