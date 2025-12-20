@@ -304,12 +304,13 @@
         <div class="container">
             
             <!-- A. Introduction -->
-            <p>I spent two years as a Teach For India Fellow in Ahmedabad, teaching Math and Science to 200 students in a low-income private school. It was among the most challenging experiences of my life. I was managing limited resources, navigating precarious relationships with parents and school administration, dealing with the chaos of being a first-time teacher at the age of 22, maybe 5 years older than my students at that point.</p>
+            <p>I spent two years as a Teach For India Fellow in Ahmedabad, teaching Math and Science to 200 students in a low-income private school. It was among the most challenging experiences of my life. I was managing limited resources, navigating precarious relationships with parents and school administration, dealing with the chaos of being a first-time teacher at the age of 22, maybe 6 years older than my students at that point.</p>
 
             <p>Some days, I genuinely questioned whether I could keep going. But I did. Because leaving mid-year would have meant those 200 students losing yet another teacher, falling further behind and leaving them with another adult who broke their promise.</p>
 
             <img src="images/cg_10A.jpg" alt="My classroom of 10th graders" style="max-width: 700px;">
-            
+            <p style="text-align: center; font-size: 0.9rem; color: var(--gray-light); margin-top: 10px; font-style: italic;">My classroom of 10th graders</p>
+
             <p>Not every Fellow makes it through the two-year commitment. And when they don't, the students pay the price. Disrupted learning, lost relationships, and the message that maybe they're not worth sticking around for.</p>
 
             <p>The data backs this up: <strong>Fellows who score low on a trait, specifically 'grit', are nearly twice as likely to leave before completing their commitment</strong> compared to those who meet the bar. (Duckworth et al., 2007)</p>
@@ -317,7 +318,7 @@
             <h3>The Research Question</h3>
             <p>Can we build a machine learning model that identifies at-risk candidates from their application essays to focus manual evaluators on the cases that matter most?</p>
 
-            <p>This blog goes over a fine-tuned RoBERTa model that is capable of processing 20,000+ applications anually, achieving 63% recall on at-risk candidates while reducing manual screening workload by 60%. More importantly, it demonstrates how optimizing for the right metric, not the highest accuracy, can create real-world impact when human context shapes technical decisions.</p>
+            <p>This blog goes over a fine-tuned RoBERTa model that is capable of processing 20,000+ applications anually, achieving 63% recall on at-risk candidates while reducing manual screening workload by 60%. More importantly, it demonstrates how optimizing for the right metric, not simply accuracy, can create real-world impact when human context shapes technical decisions.</p>
 
             <!-- B. Background & Related Work -->
             <h2>Background & Related Work</h2>
@@ -342,7 +343,7 @@
             <h2>Data</h2>
 
             <h3>Dataset Description</h3>
-            <p>The dataset comprises 14,000 labeled essays from Teach For India fellowship applications spanning 2021-2023. Each essay responds to the prompt: <em>"Describe a time where you had to push yourself and overcome challenges to succeed. This commitment could be from your professional or extracurricular experiences."</em></p>
+            <p>The dataset comprises 14,000 labeled essays from Teach For India fellowship applications spanning 2021-2023 application cycles. Each essay responds to the prompt: <em>"Describe a time where you had to push yourself and overcome challenges to succeed. This commitment could be from your professional or extracurricular experiences."</em></p>
 
             <p>Additional constraints on the experience: (a) it must not be a personal experience, and (b) must be at least a month-long commitment.</p>
 
@@ -355,9 +356,10 @@
                 <li><strong>Score 5:</strong> Outstanding evidence across multiple dimensions</li>
             </ul>
 
-            <p>The data was split 80/20 into training (11,200) and test sets (2,800). The class distribution was severely imbalanced:</p>
+            <p>The data was split 80/20 into training (11,200 approx.) and test sets (2,800 approx.). The class distribution was severely imbalanced:</p>
 
             <img src="images/class_distribution_roberta.png" alt="Bar chart showing class distribution - Score 2: 42%, Score 3: 31%, Score 1: 21%, Score 4: 6%, Score 5: 0.5%" style="max-width: 700px;">
+            <p style="text-align: center; font-size: 0.9rem; color: var(--gray-light); margin-top: 10px; font-style: italic;">Bar chart showing class distribution - Score 2: 42%, Score 3: 31%, Score 1: 21%, Score 4: 6%, Score 5: 0.5%</p>
 
             <ul>
                 <li>Score 2: 6,000 essays (42%)</li>
@@ -367,7 +369,7 @@
                 <li>Score 5: 70 essays (0.5%)</li>
             </ul>
 
-            <p>The severe imbalance toward score 2 is not a data collection artifact—it reflects reality. Most applicants demonstrate baseline grit but fall short of exceptional persistence. This distribution became a feature, not a bug.</p>
+            <p>The severe imbalance toward score 2 is not a data collection artifact, it reflects reality. Most applicants demonstrate baseline grit but fall short of exceptional persistence. This distribution became a signal I wanted the model to learn.</p>
 
             <!-- D. Exploratory Data Analysis -->
             <h2>Exploratory Data Analysis</h2>
@@ -377,29 +379,31 @@
             <h3>Essay Length Distribution</h3>
 
             <img src="images/essay_length_boxplot.png" alt="Box plot of essay length by score, showing clear separation - Score 1: 274 words, Score 2: 259 words, Score 3: 318 words, Score 4: 431 words, Score 5: 538 words" style="max-width: 700px;">
+            <p style="text-align: center; font-size: 0.9rem; color: var(--gray-light); margin-top: 10px; font-style: italic;">Box plot of essay length by score, showing clear separation at teh critical boundary between 2 and 3.</p>
 
-            <p>A striking pattern emerged: essay length correlates strongly with score. Score 1 essays averaged 287 words, score 2 averaged 412 words, while scores 3-5 averaged 520+ words. This wasn't about hitting word counts—longer essays provided more complete narratives with context, obstacles, actions, and outcomes. Shorter essays often lacked crucial elements of storytelling.</p>
+            <p>A striking pattern emerges: essay length correlates with the final essay score. Score 1 essays averaged 324 words, score 2 averaged 294 words, while scores 3-5 averaged 350+ words. This wasn't about hitting word counts, which the scores of 1 show as their word counts are higher than the score 2 essays. The difference is word count can be explained by the content of the experiences.</p>
 
             <h3>Preliminary Finding: Content vs. Structure</h3>
-            <p>I hypothesized that essay topics would be the strongest predictor—teaching experience would outperform, say, sports achievements. To test this, I applied Latent Dirichlet Allocation (LDA) to extract 8 topics from the corpus.</p>
+            <p>I hypothesized that essay topics would be the strongest predictor, teaching experience would outperform, say, sports achievements or corporate experiences. To test this, I applied Latent Dirichlet Allocation (LDA) to extract 8 topics from the corpus.</p>
 
             <img src="images/topic_distribution_heatmap.png" alt="Heatmap showing topic distribution across score levels - Topics include: Classroom Teaching, Academic Challenges, Sports/Athletics, Social Initiatives, Workplace Projects, Leadership Roles, Community Service, Team Management" style="max-width: 700px;">
+            <p style="text-align: center; font-size: 0.9rem; color: var(--gray-light); margin-top: 10px; font-style: italic;">Heatmap showing topic distribution across score levels - Topics include: Classroom Teaching, Academic Challenges, Sports/Athletics, Social Initiatives, Workplace Projects, Leadership Roles, Community Service, Team Management</p>
 
-            <p><strong>The surprising finding:</strong> Topic distribution was nearly uniform across scores. The most common topic, "Classroom Experience," appeared in 12-28% of essays across all score levels—not concentrated in high scores as expected. Similarly, "Leadership Roles," "Community Service," and "Team Management" showed no clear pattern favoring higher scores. What mattered was <em>how</em> candidates told their story—the completeness of narrative structure, the specificity of obstacles, and the clarity of their role—not <em>what</em> they wrote about.</p>
+            <p><strong>The surprising finding:</strong> Topic distribution was nearly uniform across scores. "Classroom Experience" appeared in 23-29% of essays regardless of score level. "Leadership Roles," "Community Service," and other topics showed similar patterns—no topic concentrated in high or low scores. What mattered was <em>how</em> candidates told their story—the completeness of narrative structure, the specificity of obstacles, and the clarity of their role—not <em>what</em> they wrote about.</p>
+
             <p>This informed a crucial modeling decision: don't rely on topic features. Let the transformer learn nuanced linguistic patterns that capture narrative quality rather than surface-level content.</p>
-
 
             <!-- F. TECHNICAL APPROACH -->
             <h2>Technical Approach</h2>
 
             <h3>The Imbalance Choice</h3>
-            <p>When dealing with imbalanced classes in a classification problem, the conventional wisdom is to either generate synthetic data to boost the minority class or use balanced class weights to ensure the model accurately learns each class.</p>
+            <p>Conventional wisdom for imbalanced classes says rebalance aggressively: match all class sizes through oversampling, undersampling, or heavy loss weighting.</p>
 
-            <p><strong>I did neither.</strong></p>
+            <p>I preserved the natural distribution with only modest class weights.</p>
 
-            <p>The purpose of this model is NOT to predict which applicants will be fellows. Its job is to predict which applicants will not be fellows, with a high degree of accuracy and confidence.</p>
+            <p>The model's task is asymmetric: flag who will quit, not predict who will excel. With 42% of essays scored "2," the natural distribution provides extensive examples of the critical boundary: candidates "just failing the bar" between at-risk (1-2) and likely-to-persist (3+).</p>
 
-            <p>Why? The fellowship is hard in a specific way. Most candidates are somewhere in the middle. Having 42% of essays scored as "2" meant the model saw tons of examples of "just meeting the bar." This imbalance encodes exactly the signal I needed: strong detection of at-risk candidates.</p>
+            <p>I applied gentle weights (1: 2.4119 2: 0.4148, 3: 0.5716 4: 2.5225, 5: 35.1519) to nudge the model toward minorities without synthetic rebalancing. Having 6,000 natural examples of score-2 essays—the hardest distinction from score 3—proved more valuable than forcing artificial parity across all classes.</p>
 
             <h3>Model Architecture</h3>
             <p>I fine-tuned <strong>RoBERTa-base</strong> (125M parameters) with a critical architectural choice: output probability distributions instead of hard classifications.</p>
@@ -417,6 +421,7 @@ Classification head
 Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
 
             <img src="images/roberta_architecture_simple.png" alt="RoBERTa architecture diagram showing horizontal flow from input text through encoder, pooling, classifier, to probability distribution output">
+            <p style="text-align: center; font-size: 0.9rem; color: var(--gray-light); margin-top: 10px; font-style: italic;">RoBERTa architecture diagram showing horizontal flow from input text through encoder, pooling, classifier, to probability distribution output</p>
 
             <p>Instead of returning "This essay is a 2," the model outputs: "68% confident it's a 2, but 18% chance it's a 3." This uncertainty quantification became crucial in production.</p>
 
@@ -566,6 +571,7 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
             </ul>
 
             <img src="images/final_validation_confusion_matrix.png" alt="RoBERTa confusion matrix showing performance from production." style="width: 100%; margin: 0;">
+            <p style="text-align: center; font-size: 0.9rem; color: var(--gray-light); margin-top: 10px; font-style: italic;">RoBERTa confusion matrix showing performance from production.</p>
 
             <p>The 35% "false positive" rate (flagged for review but turned out to be low-scoring) reflects conservative design: when uncertain, flag for review rather than auto-reject. This protects against high-stakes mistakes.</p>
 
@@ -576,7 +582,7 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
             <p>A model with 49% accuracy beat one with 52% because it solved the right problem. If I'd optimized for overall accuracy, I would've deployed the wrong model. My experience as a Fellow gave me the context to know that false negatives (flagging strong candidates for review) are recoverable through human evaluation, but false positives (accepting candidates who leave) directly harm students.</p>
 
             <h3>2. Class Imbalance as Signal</h3>
-            <p>Having 42% score-2 essays reflected reality: most applicants are in the middle. The fellowship is hard—not everyone thrives, but not everyone fails. The model seeing tons of "just meeting the bar" examples made it better at distinguishing score 2 (at risk) from score 3 (likely to persist).</p>
+            <p>Having 42% score-2 essays reflected reality: most applicants are in the middle. The fellowship is hard in a specific way, not everyone thrives, but not everyone fails. The model seeing tons of "just meeting the bar" examples made it better at distinguishing score 2 (at risk) from score 3 (likely to persist).</p>
 
             <p><strong>Caveat:</strong> I didn't run full ablation studies comparing different balancing strategies due to compute constraints. The DeBERTa comparison confounds sample size (10k vs. 14k) with balancing strategy. However, production results validate the approach: 5 months of real-world use show the model generalizes well.</p>
 
@@ -592,7 +598,7 @@ Output: P(1)=12%, P(2)=68%, P(3)=18%, P(4)=2%, P(5)=0%</code></pre>
             <!-- K. CONCLUSION & FUTURE WORK -->
             <h2>Conclusion & Future Work</h2>
 
-            <p>This project demonstrates that optimizing for the right metric—not the highest accuracy—can create meaningful real-world impact. A 49% accurate model that catches 63% of at-risk candidates is more valuable than a 52% accurate model that catches only 43%, because it solves the actual problem.</p>
+            <p>This project demonstrates that optimizing for the right metric, not the highest accuracy, can create meaningful real-world impact. A 49% accurate model that catches 63% of at-risk candidates is more valuable than a 52% accurate model that catches only 43%, because it solves the actual problem.</p>
 
             <h3>What's Next</h3>
             <p>The model has been running successfully for 5 months. Next steps:</p>
