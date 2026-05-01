@@ -1,0 +1,8 @@
+# Core RL dependencies
+gymnasium>=0.29
+numpy>=1.24
+torch>=2.0
+stable-baselines3>=2.2   # PPO implementation — or port from Red project
+
+# Utilities
+tqdm

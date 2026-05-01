@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarifai: A Diagnostic Tool Built for Teachers, Not Students</title>
+    <style>
+        :root {
+            --teal: #5eadbd;
+            --teal-light: #e8f4f6;
+            --gray: #555;
+            --gray-light: #777;
+            --gray-lighter: #e0e0e0;
+            --black: #2c2c2c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.7;
+            color: var(--black);
+            background: #ffffff;
+            padding-top: 70px;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-lighter);
+            z-index: 1000;
+        }
+
+        nav .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--black);
+            text-decoration: none;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        nav .nav-links a:hover {
+            color: var(--teal);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .back-link {
+            padding: 80px 0 30px;
+        }
+
+        .back-link a {
+            color: var(--teal);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .post-header {
+            padding: 20px 0 50px;
+            border-bottom: 1px solid var(--gray-lighter);
+        }
+
+        .post-header h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: var(--black);
+        }
+
+        .post-meta {
+            color: var(--gray-light);
+            font-size: 0.95rem;
+        }
+
+        .post-content {
+            padding: 60px 0;
+        }
+
+        .post-content h2 {
+            font-size: 1.8rem;
+            margin: 50px 0 25px;
+            color: var(--black);
+        }
+
+        .post-content h3 {
+            font-size: 1.3rem;
+            margin: 40px 0 20px;
+            color: var(--black);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 20px 0 20px 25px;
+        }
+
+        .post-content li {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+
+        .post-content strong {
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        .post-content em {
+            font-style: italic;
+        }
+
+        .post-content a {
+            color: var(--teal);
+            text-decoration: none;
+        }
+
+        .post-content a:hover {
+            text-decoration: underline;
+        }
+
+        .post-content pre {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 25px 0;
+            font-size: 0.9rem;
+            border: 1px solid var(--gray-lighter);
+        }
+
+        .post-content code {
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .post-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+
+        .post-content table th,
+        .post-content table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-lighter);
+        }
+
+        .post-content table th {
+            background: var(--teal-light);
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        .callout-box {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: 3px solid #e74c3c;
+            border-radius: 12px;
+            padding: 30px 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .callout-box h3 {
+            color: #c0392b;
+            font-size: 1.5rem;
+            margin: 0 0 20px 0;
+            letter-spacing: 1px;
+        }
+
+        .callout-box p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+
+        .callout-box p:last-child {
+            margin-bottom: 0;
+            font-style: italic;
+            font-size: 1.05rem;
+        }
+
+        .kicker {
+            background: var(--teal-light);
+            border-left: 4px solid var(--teal);
+            padding: 25px 30px;
+            margin: 50px 0 30px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            font-style: italic;
+            color: var(--black);
+            line-height: 1.6;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 30px auto;
+            border-radius: 8px;
+        }
+
+        .post-footer {
+            border-top: 1px solid var(--gray-lighter);
+            padding: 40px 0 80px;
+            font-size: 0.95rem;
+            color: var(--gray);
+        }
+
+        .post-footer a {
+            color: var(--teal);
+            text-decoration: none;
+        }
+
+        .post-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            nav .container {
+                padding: 15px 25px;
+            }
+
+            .container {
+                padding: 0 25px;
+            }
+
+            .post-header h1 {
+                font-size: 2rem;
+            }
+
+            .post-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .post-content h3 {
+                font-size: 1.2rem;
+            }
+
+            .callout-box {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">Niranjan Prakash</a>
+            <div class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html#experience">Experience</a>
+                <a href="index.html#projects">Projects</a>
+                <a href="blog.html">Blog</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Back Link -->
+    <div class="container">
+        <div class="back-link">
+            <a href="blog.html">← Back to Blog</a>
+        </div>
+    </div>
+
+    <!-- Post Header -->
+    <div class="container">
+        <div class="post-header">
+            <h1>Clarifai</h1>
+            <div class="post-meta">
+                <span>Niranjan Prakash | April 2026</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post Content -->
+    <article class="post-content">
+        <div class="container">
+
+            <p>When I was a fellow with <a href="https://www.teachforindia.org" target="_blank">Teach For India</a>, one of my least favourite deliverables was the diagnostic assessment. The intent behind it was good — give teachers a baseline gauge of where their classroom is before diving into new material. The execution was brutal. Hand-grade the papers. Enter scores into a Google Sheet, one student at a time. By the time you've processed everything, a week has passed and you've already started teaching the next unit.</p>
+
+            <p>And even then, the data didn't tell you much. A diagnostic that tries to cover an entire year of material in 15 questions can tell you that half your class struggles with electricity. It can't tell you <em>why</em>. Is it formula rearrangement? Formula recollection? Basic arithmetic? Or do they genuinely not have a mental model for what current is? That's the difference between four completely different interventions — and the diagnostic just said "7/15."</p>
+
+            <p>So I'd figure it out the slow way. Through follow-up lessons, class discussions, one-on-one conversations. By the time I'd pinpointed the actual misconception, weeks had passed and the class had moved on.</p>
+
+            <p>I wanted to build a tool that could close that gap.</p>
+
+            <h2>The First Version Was Wrong</h2>
+
+            <p>My initial idea was a platform that could diagnose specific misconceptions and then put students in front of an AI tutor — a Socratic chatbot that would ask questions rather than give answers, helping students work through their misunderstandings one-on-one.</p>
+
+            <p>It worked reasonably well in controlled testing. Then I thought seriously about what would actually happen in a real classroom — my classroom, in Ahmedabad, with 32 kids and 40-minute periods — and the model fell apart.</p>
+
+            <p>I didn't have to imagine very hard. Khan Academy just lived this experiment at massive scale, and it failed. <a href="https://danmeyer.substack.com/p/rip-khanmigo-and-edtech-industry" target="_blank">Khanmigo</a>, their AI tutor, launched in 2023 with a prediction from Sal Khan that it would drive "probably the biggest positive transformation that education has ever seen." Three years and millions of dollars later, Khan himself called it "a non-event" for most students. "They just didn't use it much," he told Chalkbeat a few weeks ago. A geometry teacher whose school piloted Khanmigo stopped using it because her students "didn't really care for the bot." Khan Academy's Chief Academic Officer said: "So far I am not seeing the revolution in education."</p>
+
+            <p>The pattern was consistent: students who were already motivated used it; students who were struggling — the ones who needed it most — didn't seek it out. Khan's own analogy was telling: imagine he walked into a classroom, sat in the back, and waited for students to come ask for help. "Some will; most won't."</p>
+
+            <p>This confirmed something I'd felt building my own tutor. The problem isn't that students lack access to explanations. The problem is that the teacher — the person standing in front of 32 students with 40 minutes — often has the instinct for what's wrong but not the specific data or the concrete plan to act on it. That's where the leverage is.</p>
+
+            <h2>What Diagnostic Data Should Actually Look Like</h2>
+
+            <p>Most diagnostic tools give teachers a score. 58% class average. Kavya got 12/15. Arjun got 7/15.</p>
+
+            <p>That's not diagnostic data. That's a leaderboard.</p>
+
+            <p>When I redesigned the assessment tool, I mapped every wrong answer option to a specific, named misconception. Not just "incorrect" — but <em>this</em> incorrect, for <em>this</em> reason.</p>
+
+            <p>Take an Ohm's Law question. A student who picks the wrong answer could be wrong in several distinct ways:</p>
+
+            <ul>
+                <li>They think voltage and current are the same quantity.</li>
+                <li>They can apply V=IR when solving for V but can't rearrange it for I or R.</li>
+                <li>They understand the formula mechanically but have no physical model for what resistance actually means.</li>
+                <li>They get isolated formula problems right but fall apart when they see a multi-component circuit.</li>
+            </ul>
+
+            <p>Each of these requires a completely different intervention. Grouping them all under "needs more practice with Ohm's Law" is noise, not signal.</p>
+
+            <p>The assessment detects these patterns across the whole class. After 30 students submit, the dashboard doesn't show a grade distribution — it shows which misconception clusters are present, how many students fall into each, and what the root causes are.</p>
+
+            <h2>The Pivot</h2>
+
+            <p>So I stopped building for the student and started building for the teacher.</p>
+
+            <p>The insight came from a conversation with a co-fellow who's still teaching. Teachers have access to a lot of student data. The bottleneck isn't information — it's capacity. Knowing that 12 students confuse voltage with resistance doesn't help if you don't have a plan for what to do about it in tomorrow's 40-minute period, while also keeping the other 20 students engaged.</p>
+
+            <p>That's what the co-pilot does. It takes the class diagnostic data — the actual misconception patterns, not just scores — and generates a specific, ready-to-use classroom plan:</p>
+
+            <ul>
+                <li>The priority misconception, with its root cause in plain language and how many students are affected.</li>
+                <li>A concrete classroom move for tomorrow — not "reteach the concept" but a specific question to pose, a specific activity to run, with a time estimate. For example: the water pipe analogy for voltage vs. current, structured as a 15-minute individual-then-group activity.</li>
+                <li>A grouping suggestion based on the data — not generic "pair strong with weak" but a feasible approach given what the diagnostic revealed about which students understand what.</li>
+                <li>Resolution signals — one thing to listen for that means the misconception is resolving, one thing that means it isn't. So the teacher knows in real-time whether the intervention is working.</li>
+                <li>Follow-up problems — one to expose the gap, one to confirm resolution.</li>
+            </ul>
+
+            <img src="images/Clairfai-suggestions.png" alt="Clarifai co-pilot output showing a priority misconception, a step-by-step classroom activity for tomorrow, a grouping suggestion, and resolution signals" style="max-width: 700px;">
+            <p style="text-align: center; font-size: 0.9rem; color: var(--gray-light); margin-top: 10px; font-style: italic;">A co-pilot plan: priority misconception, tomorrow's activity with time estimate, grouping suggestion, and what to listen for.</p>
+
+            <p>The key constraint: the co-pilot cannot give generic advice. Every suggestion has to name the specific misconception, the specific task, and why that task targets the root cause rather than the symptom. It can do this because it has the diagnostic data. That's what makes it different from asking ChatGPT for lesson planning help.</p>
+
+            <p>And it's conversational. After the initial plan, the teacher can push back: "I only have 15 minutes." "That analogy won't land with my students." "How do I handle this if half the class was absent for the first lesson?" The co-pilot adjusts because it still has the full class context.</p>
+
+            <h2>The Bet Underneath</h2>
+
+            <p>The test subject — electricity, trigonometry, fractions — is almost secondary. What I'm really trying to catch are conceptual gaps that travel across subjects and years.</p>
+
+            <p>A student who hasn't developed multiplicative reasoning about ratios will struggle in chemistry, physics, and every quantitative subject that follows. A student who thinks current gets "used up" as it flows through a circuit will never correctly reason about Kirchhoff's laws, no matter how many practice problems they do. A student who doesn't understand why sin 30° is a fixed number regardless of triangle size — because it's a ratio, and ratios are scale-invariant — will memorize trig tables and fail the moment the problem changes shape. These aren't electricity problems or trig problems. They're foundational misconceptions that compound. The diagnostic is just the instrument that makes them visible early enough to do something about it.</p>
+
+            <h2>Where It Is Now</h2>
+
+            <p><a href="https://clarifai-ed-production.up.railway.app/login" target="_blank">Clarifai</a> is live. A teacher can create a session, share a code, and have students take a diagnostic on their phones. The dashboard surfaces misconception patterns in real time. The co-pilot generates intervention plans grounded in the actual class data.</p>
+
+            <img src="images/Clairfai-dashboard.png" alt="Clarifai dashboard showing misconception clusters for a Trigonometry Readiness Diagnostic — 28 students, three critical-risk patterns identified with affected students listed" style="max-width: 700px;">
+            <p style="text-align: center; font-size: 0.9rem; color: var(--gray-light); margin-top: 10px; font-style: italic;">The dashboard after 28 students complete the diagnostic — misconception clusters ranked by risk, each with affected students listed.</p>
+
+            <p>It currently covers Electricity (Grade 9), Trig Prerequisites (Grade 10), and six Grade 8 NCERT math topics — Linear Equations, Algebraic Expressions, Ratios &amp; Proportions, Simple Interest, Triangles, and Quadrilaterals.</p>
+
+            <p>In June, I'm piloting it with a class of Grade 9 students through a Teach For India connection. The question I care most about isn't whether the AI can generate a plan. It's whether the plan is good enough that a teacher would actually use it — and whether students' specific misconceptions actually resolve when they do.</p>
+
+            <p>If you're a teacher, a school leader, or someone who works in education and this resonates — I'd love to hear from you. Try the demo. Tell me what's missing. Tell me what would make this actually useful in your classroom.</p>
+
+            <div class="kicker">
+                The goal is simple: ensure that every teacher has the information and the plan to reach every student. Not someday. Tomorrow morning.
+            </div>
+
+        </div>
+    </article>
+
+    <!-- Post Footer -->
+    <div class="container">
+        <div class="post-footer">
+            Built by Niranjan Prakash. <a href="https://github.com/nprak42/clarifai-ed/" target="_blank">Source code on GitHub.</a>
+        </div>
+    </div>
+
+</body>
+</html>
